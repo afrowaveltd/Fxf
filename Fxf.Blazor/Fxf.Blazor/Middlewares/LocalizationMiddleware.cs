@@ -19,5 +19,23 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 		await next(context);
 	}
 
-
+	private string? GetCultureFromRequest(HttpContext context)
+	{
+		string? culture = _cookieService.GetCookie("BlazorCulture");
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		culture = context.Request.Query["culture"];
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		culture = context.Request.Headers["Accept-Language"].ToString().Split(',').FirstOrDefault();
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		return "en";
+	}
 }
