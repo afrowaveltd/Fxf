@@ -10,7 +10,7 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 	{
 		// we will check cookie first, then query and acceptLanguage hearders last - default en
 
-		var cultureQuery = context.Request.Query["culture"];
+		string? cultureQuery = context.Request.Query["culture"];
 
 		if(!string.IsNullOrWhiteSpace(cultureQuery))
 		{
@@ -18,4 +18,6 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 		}
 		await next(context);
 	}
+
+
 }

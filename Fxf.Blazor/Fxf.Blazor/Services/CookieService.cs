@@ -48,8 +48,8 @@ public class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieSe
 	}
 
 	/// <summary>
-	/// Get a cookie by key
-	/// </summary>
+	/// Get a cookie <see cref="by key
+	/// </summary>"/>
 	/// <param name="key">name of the cookie to get</param>
 	/// <returns>The cookie value or empty string</returns>
 	public string GetCookie(string key)
