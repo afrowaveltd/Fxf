@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fxf.Blazor.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
-    {
-    }
+	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+	{
+	}
 }
