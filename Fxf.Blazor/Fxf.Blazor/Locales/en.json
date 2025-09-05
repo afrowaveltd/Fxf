@@ -1,0 +1,9 @@
+{
+	"_test": "This is a test string",
+	"Auth Required": "Authentication Required",
+	"Counter": "Counter",
+	"Login": "Login",
+	"Logout": "Logout",
+	"Register": "Register",
+	"Weather": "Weather"
+}

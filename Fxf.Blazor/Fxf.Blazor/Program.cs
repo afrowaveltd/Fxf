@@ -2,6 +2,9 @@ using Fxf.Blazor.Components;
 using Fxf.Blazor.Components.Account;
 using Fxf.Blazor.Data;
 using Fxf.Blazor.I18n;
+using Fxf.Blazor.Middlewares;
+using Fxf.Blazor.Services;
+using Fxf.Blazor.Services.LibreTranslate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -63,14 +66,27 @@ builder.Services.AddAntiforgery(options =>
 	 });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
-
 builder.Services.AddCascadingAuthenticationState();
 
+// middlewares
+builder.Services.AddTransient<LocalizationMiddleware>();
+
+// Transient services
 builder.Services.AddTransient<IStringLocalizerFactory, JsonStringLocalizerFactory>();
 
+// Scoped services
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddSingleton<ICookieService, CookieService>();
 
+// Singleton services
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IHttpService, HttpService>();
+builder.Services.AddSingleton<ILibreTranslateService, LibreTranslateService>();
+builder.Services.AddSingleton<ILanguageService, LanguageService>();
+// Worker services
+
+// Identity configuration
 builder.Services.AddAuthentication(options =>
 	 {
 		 options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -108,6 +124,22 @@ else
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
+string[] supportedCultures = ["en"];
+ILanguageService languageService = app.Services.GetRequiredService<ILanguageService>();
+if(languageService != null)
+{
+	supportedCultures = languageService.TranslationsPresented();
+}
+
+app.UseMiddleware<LocalizationMiddleware>();
+app.UseRequestLocalization(options =>
+{
+	options.AddSupportedCultures(supportedCultures)
+		 .AddSupportedUICultures(supportedCultures)
+		 .SetDefaultCulture("en")
+		 .ApplyCurrentCultureToResponseHeaders = true;
+});
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForErrors: true);
 
 app.UseHttpsRedirection();
@@ -117,7 +149,7 @@ app.MapOpenApi()
 app.MapScalarApiReference(options =>
 {
 	_ = options
-		 .WithTitle("FxF Open API Explorer")
+		 .WithTitle("F@F Open API Explorer")
 		 .WithTheme(ScalarTheme.Mars)
 		 .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
@@ -132,7 +164,7 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-
+app.MapControllers();
 // Here we add starting procedures for localization.
 
 app.Run();

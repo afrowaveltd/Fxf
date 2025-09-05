@@ -15,10 +15,21 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 
 		if(!string.IsNullOrWhiteSpace(cultureQuery))
 		{
+			var cultureData = new System.Globalization.CultureInfo(cultureQuery);
+			CultureInfo uiCulture = IsValidCulture(cultureQuery) ? new CultureInfo(cultureQuery) : new CultureInfo("en");
+			CultureInfo culture = IsValidCulture(cultureQuery) ? new CultureInfo(cultureQuery) : new CultureInfo("en");
+
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentUICulture = uiCulture;
+			context.Request.Headers.AcceptLanguage = cultureQuery;
 			_cookieService.SetCookie("BlazorCulture", cultureQuery, 30 * 24 * 60); // 30 days
-			var culture = new System.Globalization.CultureInfo(cultureQuery);
-			System.Globalization.CultureInfo.CurrentCulture = culture;
-			// Check which locales are supported
+																										  // Check which locales are supported
+		}
+		else
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
+			context.Request.Headers.AcceptLanguage = "en";
 		}
 		await next(context);
 	}

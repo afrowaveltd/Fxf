@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Fxf.Blazor.Models.LibreTranslate;
+using Fxf.Blazor.Services.LibreTranslate;
+using Fxf.Shared.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Text.Json;
@@ -9,9 +12,10 @@ namespace Fxf.Blazor.I18n;
 /// Provides localization using JSON files for Blazor applications.
 /// Implements <see cref="IStringLocalizer"/> and supports distributed caching.
 /// </summary>
-public class JsonStringLocalizer(IDistributedCache cache) : IStringLocalizer
+public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService translationService) : IStringLocalizer
 {
 	private IDistributedCache _cache = cache;
+	private ILibreTranslateService _translationService = translationService;
 
 	private string LocalesPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory
 [..AppDomain.CurrentDomain.BaseDirectory
@@ -100,7 +104,19 @@ public class JsonStringLocalizer(IDistributedCache cache) : IStringLocalizer
 		{
 			_cache.SetString(cacheKey, value);
 		}
+		else
+		{
+			Response<TranslateResult> translationResult = Task.Run(
+				() => _translationService.TranslateTextAsync(key, "en", Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName))
+				.GetAwaiter()
+				.GetResult();
 
+			if(translationResult.Success && translationResult.Data != null)
+			{
+				value = translationResult.Data.TranslatedText;
+				_cache.SetString(cacheKey, value);
+			}
+		}
 		return value;
 	}
 
@@ -120,33 +136,23 @@ public class JsonStringLocalizer(IDistributedCache cache) : IStringLocalizer
 
 		try
 		{
-			byte[] jsonBytes = File.ReadAllBytes(filePath);
-			var reader = new Utf8JsonReader(jsonBytes, new JsonReaderOptions { CommentHandling = JsonCommentHandling.Skip });
-
-			while(reader.Read())
-			{
-				if(reader.TokenType == JsonTokenType.PropertyName && reader.GetString() == key)
-				{
-					// Přečti další token (hodnotu)
-					if(reader.Read())
-					{
-						return reader.TokenType switch
-						{
-							JsonTokenType.String => reader.GetString(),
-							JsonTokenType.Number => reader.GetDouble().ToString(),
-							JsonTokenType.True => "true",
-							JsonTokenType.False => "false",
-							_ => reader.GetString()
-						};
-					}
-				}
-			}
+			string jsonDictionary = File.ReadAllText(filePath);
+			Dictionary<string, string> pairs = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonDictionary) ?? new();
+			return pairs[key] ?? "";
 		}
 		catch
 		{
-			return default;
+			return "";
 		}
+	}
 
-		return default;
+	private Response<TranslateResult> TranslateSync(
+	 string text, string from, string to)
+	{
+		return _translationService
+			 .TranslateTextAsync(text, from, to)
+			 .ConfigureAwait(false)
+			 .GetAwaiter()
+			 .GetResult();
 	}
 }

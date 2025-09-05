@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Fxf.Blazor.Services.LibreTranslate;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 
 namespace Fxf.Blazor.I18n;
@@ -6,9 +7,10 @@ namespace Fxf.Blazor.I18n;
 /// <summary>
 /// Factory for creating instances of <see cref="JsonStringLocalizer"/> for Blazor localization using JSON files.
 /// </summary>
-public class JsonStringLocalizerFactory(IDistributedCache cache) : IStringLocalizerFactory
+public class JsonStringLocalizerFactory(IDistributedCache cache, ILibreTranslateService libreTranslate) : IStringLocalizerFactory
 {
 	private readonly IDistributedCache _cache = cache;
+	private readonly ILibreTranslateService _libreTranslate = libreTranslate;
 
 	/// <summary>
 	/// Creates a <see cref="JsonStringLocalizer"/> for the specified resource type.
@@ -17,7 +19,7 @@ public class JsonStringLocalizerFactory(IDistributedCache cache) : IStringLocali
 	/// <returns>A <see cref="IStringLocalizer"/> instance for the resource.</returns>
 	public IStringLocalizer Create(Type resourceSource)
 	{
-		return new JsonStringLocalizer(_cache);
+		return new JsonStringLocalizer(_cache, _libreTranslate);
 	}
 
 	/// <summary>
@@ -28,6 +30,6 @@ public class JsonStringLocalizerFactory(IDistributedCache cache) : IStringLocali
 	/// <returns>A <see cref="IStringLocalizer"/> instance for the resource.</returns>
 	public IStringLocalizer Create(string baseName, string location)
 	{
-		return new JsonStringLocalizer(_cache);
+		return new JsonStringLocalizer(_cache, _libreTranslate);
 	}
 }

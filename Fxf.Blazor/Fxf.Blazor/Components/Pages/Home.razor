@@ -1,7 +1,8 @@
 ﻿@page "/"
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Home> _localizer;
 <PageTitle>FxF</PageTitle>
 
-<h1>Here we go!</h1>
+<h1>@_localizer["_test"]</h1>
 
-Welcome to your new app.
+@_localizer["Welcome to your new app."]
