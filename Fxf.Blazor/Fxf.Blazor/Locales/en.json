@@ -4,6 +4,7 @@
 	"Counter": "Counter",
 	"Login": "Login",
 	"Logout": "Logout",
+	"No locale files found": "No locale files found",
 	"Register": "Register",
 	"Weather": "Weather"
 }

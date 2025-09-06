@@ -35,7 +35,7 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 			Thread.CurrentThread.CurrentUICulture = uiCulture;
 			context.Request.Headers.AcceptLanguage = cultureQuery;
 			_cookieService.SetCookie("BlazorCulture", cultureQuery, 30 * 24 * 60); // 30 days
-			// Check which locales are supported
+																										  // Check which locales are supported
 		}
 		else
 		{
