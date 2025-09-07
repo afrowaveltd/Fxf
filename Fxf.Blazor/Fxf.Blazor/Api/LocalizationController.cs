@@ -42,7 +42,7 @@ public class LocalizationController(ILanguageService languageService, IStringLoc
 	/// locale files are returned; otherwise, server locale files are retrieved.</param>
 	/// <returns>An <see cref="IActionResult"/> containing a collection of locale files if found, or a 404 Not Found response if no
 	/// locale files are available.</returns>
-	[HttpGet("get_locales/{is_client?}")]
+	[HttpGet("get_locales/{is_client}")]
 	public async Task<IActionResult> GetLocalesAsync(bool? is_client = true)
 	{
 		var result = await _languageService.GetAllDictionariesAsync(is_client is not null && is_client == true ? true : false);
