@@ -17,7 +17,7 @@ public class LibreTranslateService : ILibreTranslateService
 {
 	private readonly Translator _translatorOptions;
 	private readonly IHttpService _httpService;
-	private readonly IHubContext<LibreTranslateHub> _hub;
+	private readonly IHubContext<LocalizationHub> _hub;
 
 	private readonly JsonSerializerOptions _options = new()
 	{
@@ -32,7 +32,7 @@ public class LibreTranslateService : ILibreTranslateService
 	/// <param name="configuration">Application configuration containing the <c>Translator</c> section.</param>
 	/// <param name="httpService">HTTP abstraction used to perform API calls.</param>
 	/// <param name="hub">SignalR hub context for server push notifications (reserved for future use).</param>
-	public LibreTranslateService(IConfiguration configuration, IHttpService httpService, IHubContext<LibreTranslateHub> hub)
+	public LibreTranslateService(IConfiguration configuration, IHttpService httpService, IHubContext<LocalizationHub> hub)
 	{
 		_translatorOptions = configuration.GetSection("Translator").Get<Translator>() ?? new Translator();
 		_httpService = httpService;

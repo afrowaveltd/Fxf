@@ -1,6 +1,7 @@
 using Fxf.Blazor.Components;
 using Fxf.Blazor.Components.Account;
 using Fxf.Blazor.Data;
+using Fxf.Blazor.Hubs;
 using Fxf.Blazor.I18n;
 using Fxf.Blazor.Middlewares;
 using Fxf.Blazor.Services;
@@ -8,6 +9,7 @@ using Fxf.Blazor.Services.LibreTranslate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
@@ -109,6 +111,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 	 .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddSignalR();
+builder.Services.AddMemoryCache();
+builder.Services.AddResponseCompression(opts =>
+{
+	opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+		 ["application/octet-stream"]);
+});
 
 var app = builder.Build();
 
@@ -166,5 +175,7 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 app.MapControllers();
 // Here we add starting procedures for localization.
+app.UseResponseCompression();
+app.MapHub<LocalizationHub>("/signalr_localization");
 
 app.Run();
