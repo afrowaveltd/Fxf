@@ -1,7 +1,7 @@
 ﻿@page "/realtime"
 @rendermode InteractiveAuto
 @using Microsoft.AspNetCore.SignalR.Client
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 <h3>Realtime</h3>
 
 @code {
@@ -10,7 +10,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		hubConnection = new HubConnectionBuilder()
-			.WithUrl("https://127.0.0.1:5009/signalr_localization")
+			.WithUrl(Navigation.ToAbsoluteUri("/signalr_localization"))
 			.WithAutomaticReconnect()
 			.Build();
 		hubConnection.On<string>("ReceiveMessage", (message) =>
