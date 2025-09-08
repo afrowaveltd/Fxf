@@ -111,7 +111,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 	 .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+	 .AddJsonProtocol(o =>
+	 {
+		 // sladění se System.Text.Json nastavením v projektu
+		 o.PayloadSerializerOptions.PropertyNamingPolicy = null; // nechá PascalCase pokud používáš
+	 });
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCompression(opts =>
 {

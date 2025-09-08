@@ -26,4 +26,12 @@ public class LocalizationHub(ILanguageService languageService,
 	private readonly IStringLocalizer<LocalizationHub> _t = t;
 	private readonly ILanguageService _languageService = languageService;
 	private readonly ILibreTranslateService _libreService = libre;
+
+	private async Task GetLocales(bool isClient)
+	{
+		var result = await _languageService.GetAllDictionariesAsync(isClient);
+		await Clients.Caller.OnLocalesRequested(isClient);
+	}
+
+
 }
