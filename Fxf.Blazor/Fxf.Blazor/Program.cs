@@ -176,6 +176,6 @@ app.MapAdditionalIdentityEndpoints();
 app.MapControllers();
 // Here we add starting procedures for localization.
 app.UseResponseCompression();
-app.MapHub<LocalizationHub>("/signalr_localization");
+app.MapHub<LocalizationHub>("/localization_hub");
 
 app.Run();

@@ -10,7 +10,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		hubConnection = new HubConnectionBuilder()
-			.WithUrl(Navigation.ToAbsoluteUri("/signalr_localization"))
+			.WithUrl(Navigation.ToAbsoluteUri("/localization_hub"))
 			.WithAutomaticReconnect()
 			.Build();
 		hubConnection.On<string>("ReceiveMessage", (message) =>
