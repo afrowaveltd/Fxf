@@ -2,5 +2,8 @@
 
 public class LocalizationService
 {
-	public async Task<string> GetOwnLocalization
+	public async Task<string> GetOwnLocalization()
+	{
+		return "en";
+	}
 }
