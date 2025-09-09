@@ -1,4 +1,5 @@
 ﻿using Fxf.Blazor.Models.LibreTranslate;
+using Fxf.Blazor.Models.Settings;
 using Fxf.Blazor.Services;
 using Fxf.Blazor.Services.LibreTranslate;
 using Fxf.Shared.Models;
@@ -28,16 +29,19 @@ namespace Fxf.Blazor.Api;
 /// <param name="languageService">Service for language metadata and locale dictionary operations.</param>
 /// <param name="t">Localizer for user-facing and error messages.</param>
 /// <param name="accessor">Accessor for the current HTTP context.</param>
+/// <param name="cookieService">Service allowing to access and read cookies</param>
 /// <param name="libre">Service that integrates with LibreTranslate.</param>
 [Route("api/[controller]")]
 [ApiController]
 public class LocalizationController(ILanguageService languageService,
 	 IStringLocalizer<LocalizationController> t,
 	 IHttpContextAccessor accessor,
+	 ICookieService cookieService,
 	 ILibreTranslateService libre) : ControllerBase
 {
 	private readonly ILanguageService _languageService = languageService;
 	private readonly IStringLocalizer<LocalizationController> _t = t;
+	private readonly ICookieService _cookieService = cookieService;
 	private readonly IHttpContextAccessor _accessor = accessor;
 	private readonly ILibreTranslateService _libre = libre;
 
@@ -391,5 +395,45 @@ public class LocalizationController(ILanguageService languageService,
 			return BadRequest(new ErrorResponse(result.Message));
 		}
 		return BadRequest(new ErrorResponse(_t["Unknown error."].Value));
+	}
+
+	/// <summary>
+	/// Retrieves the user's locale based on the current HTTP request.
+	/// </summary>
+	/// <remarks>This method extracts the user's locale from the HTTP request context. If the locale cannot be
+	/// determined, a default locale of "en" is provided.</remarks>
+	/// <returns>An <see cref="IActionResult"/> containing a <see cref="UiLocale"/> object with the user's locale. If no locale is
+	/// determined, the default locale "en" is returned.</returns>
+	[HttpGet("get_my_locales")]
+	public IActionResult GetMyLocales()
+	{
+#pragma warning disable CS8604 // Může jít o argument s odkazem null.
+		string? cult = GetCultureFromRequest(_accessor.HttpContext);
+#pragma warning restore CS8604 // Může jít o argument s odkazem null.
+		if(cult == null)
+		{
+			return Ok(new UiLocale() { Locale = "en" });
+		}
+		return Ok(new UiLocale() { Locale = cult });
+	}
+
+	private string? GetCultureFromRequest(HttpContext context)
+	{
+		string? culture = _cookieService.GetCookie("BlazorCulture");
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		culture = context.Request.Query["culture"];
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		culture = context.Request.Headers.AcceptLanguage.ToString().Split(',').FirstOrDefault();
+		if(!string.IsNullOrWhiteSpace(culture))
+		{
+			return culture;
+		}
+		return "en";
 	}
 }
