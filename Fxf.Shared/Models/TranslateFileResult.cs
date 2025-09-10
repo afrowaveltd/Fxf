@@ -1,4 +1,4 @@
-﻿namespace Fxf.Blazor.Models.LibreTranslate;
+﻿namespace Fxf.Shared.Models;
 
 /// <summary>
 /// Represents the result of a file translation operation performed by LibreTranslate.

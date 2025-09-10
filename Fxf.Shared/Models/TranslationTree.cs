@@ -1,4 +1,4 @@
-﻿namespace Fxf.Blazor.Models.LibreTranslate;
+﻿namespace Fxf.Shared.Models;
 
 /// <summary>
 /// Represents a hierarchical structure for managing translations across multiple languages and keys.

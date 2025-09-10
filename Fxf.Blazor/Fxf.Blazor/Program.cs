@@ -154,7 +154,7 @@ app.UseRequestLocalization(options =>
 		 .ApplyCurrentCultureToResponseHeaders = true;
 });
 
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForErrors: true);
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 
 app.UseHttpsRedirection();
 app.UseForwardedHeaders();

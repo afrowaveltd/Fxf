@@ -1,5 +1,4 @@
-﻿using Fxf.Blazor.Models.LibreTranslate;
-using Fxf.Blazor.Models.Settings;
+﻿using Fxf.Blazor.Models.Settings;
 using Fxf.Blazor.Services;
 using Fxf.Blazor.Services.LibreTranslate;
 using Fxf.Shared.Models;

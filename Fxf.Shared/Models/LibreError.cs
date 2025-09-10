@@ -1,4 +1,4 @@
-﻿namespace Fxf.Blazor.Models.LibreTranslate;
+﻿namespace Fxf.Shared.Models;
 
 /// <summary>
 /// Represents an error with a descriptive message.

@@ -1,4 +1,4 @@
-﻿namespace Fxf.Blazor.Models.Settings;
+﻿namespace Fxf.Shared.Models;
 
 /// <summary>
 /// Represents a language with its associated metadata, including code, name, native name, and text direction.

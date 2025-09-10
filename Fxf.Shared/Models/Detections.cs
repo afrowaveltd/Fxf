@@ -1,4 +1,4 @@
-﻿namespace Fxf.Blazor.Models.LibreTranslate;
+﻿namespace Fxf.Shared.Models;
 
 /// <summary>
 /// Represents a language detected by a language identification process, along with its confidence score.

@@ -1,6 +1,4 @@
-﻿using Fxf.Blazor.Models.LibreTranslate;
-using Fxf.Blazor.Models.Settings;
-using Fxf.Shared.Models;
+﻿using Fxf.Shared.Models;
 using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
@@ -319,7 +317,7 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 			{
 				if(_languages.Where(s => s.Code == language).First() == null)
 				{
-					result.Data.Add(new Language { Code = language, Name = language, Native = language, Rtl = false });
+					result.Data.Add(new Shared.Models.Language { Code = language, Name = language, Native = language, Rtl = false });
 				}
 				else
 				{

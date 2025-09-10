@@ -1,5 +1,4 @@
-﻿using Fxf.Blazor.Models.LibreTranslate;
-using Fxf.Blazor.Services.LibreTranslate;
+﻿using Fxf.Blazor.Services.LibreTranslate;
 using Fxf.Shared.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
