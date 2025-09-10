@@ -12,6 +12,7 @@
 		hubConnection = new HubConnectionBuilder()
 			.WithUrl(Navigation.ToAbsoluteUri("/localization_hub"))
 			.WithAutomaticReconnect()
+			.WithStatefulReconnect()
 			.Build();
 		hubConnection.On<string>("ReceiveMessage", (message) =>
 		{
@@ -20,5 +21,6 @@
 		});
 
 		await hubConnection.StartAsync();
+		
 	}
 }

@@ -11,15 +11,15 @@ namespace Fxf.Blazor.Client.Services;
 public class ApiClientService : IApiClientService
 {
 	private readonly HttpClient _client;
-	private readonly string getLocalesUri = "localization/get_locales";                    // done
-	private readonly string getSupportedLanguagesUri = "localization/get_languages";       // done
-	private readonly string getLanguageInfoUri = "localization/get_language_info";         // done
-	private readonly string getLanguageByCodeUri = "localization/get_language_by_code";    // done
-	private readonly string localizeUri = "localization/localize";                         // done
-	private readonly string saveLocaleUri = "localization/save_locale";                    // done
-	private readonly string saveBulkUri = "localization/save_locale_bulk";                 // done
-	private readonly string getOldUri = "localization/get_old";                            // done
-	private readonly string saveOldUri = "localization/save_old";                          // done
+	private readonly string getLocalesUri = "/localization/get_locales";                    // done
+	private readonly string getSupportedLanguagesUri = "/localization/get_languages";       // done
+	private readonly string getLanguageInfoUri = "/localization/get_language_info";         // done
+	private readonly string getLanguageByCodeUri = "/localization/get_language_by_code";    // done
+	private readonly string localizeUri = "/localization/localize";                         // done
+	private readonly string saveLocaleUri = "/localization/save_locale";                    // done
+	private readonly string saveBulkUri = "/localization/save_locale_bulk";                 // done
+	private readonly string getOldUri = "/localization/get_old";                            // done
+	private readonly string saveOldUri = "/localization/save_old";                          // done
 
 	/// <summary>
 	/// Creates a new <see cref="ApiClientService"/> with a configured <see cref="HttpClient"/>.
@@ -276,7 +276,7 @@ public class ApiClientService : IApiClientService
 		var response = await _client.GetAsync(url).ConfigureAwait(false);
 		if(response.IsSuccessStatusCode)
 		{
-			var actual_dictionary = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>().ConfigureAwait(false);
+			var actual_dictionary = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
 			if(actual_dictionary != null)
 			{
 				return actual_dictionary;

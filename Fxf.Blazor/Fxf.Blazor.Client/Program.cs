@@ -1,5 +1,4 @@
 using Fxf.Blazor.Client.Services;
-using Fxf.Blazor.Client.StaticClasses;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -7,14 +6,12 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddLocalization();
 
 // Singleton services
-
 builder.Services.AddSingleton<IApiClientService, ApiClientService>();
+builder.Services.AddSingleton<ILocaleService, LocaleService>();
 
 // Scoped services
-builder.Services.AddScoped<ILocaleService, LocaleService>();
 
 // Transient services
-
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthenticationStateDeserialization();
@@ -40,14 +37,10 @@ else
 
 	string pick = locales?.Length > 0 ? locales[0] : "en";
 	parts = pick.Split("-");
-	clientLanguage = parts[0];
+	clientLanguage = parts[0]!;
 	await localeSvc.ApplyCultureAsync(parts[0], persist: false);
 }
 Console.WriteLine("Language selected: " + clientLanguage);
 
-var localizationService = app.Services.GetRequiredService<IApiClientService>();
 
-LocaleDictionary.Locales = await localizationService.GetClientDictionary(saved ?? "en");
-foreach(var line in LocaleDictionary.Locales)
-	Console.WriteLine($"{line.Key} - {line.Value}");
 await app.RunAsync();
