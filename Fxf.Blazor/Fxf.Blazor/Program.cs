@@ -163,7 +163,7 @@ app.MapOpenApi()
 app.MapScalarApiReference(options =>
 {
 	_ = options
-		 .WithTitle("F@F Open API Explorer")
+		 .WithTitle("F x F Open API Explorer")
 		 .WithTheme(ScalarTheme.Mars)
 		 .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
