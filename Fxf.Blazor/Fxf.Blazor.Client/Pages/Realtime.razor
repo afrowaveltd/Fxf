@@ -21,6 +21,10 @@
 		});
 
 		await hubConnection.StartAsync();
+
+		Console.WriteLine(hubConnection.ConnectionId);
+		StateHasChanged();
+		
 		
 	}
 }
