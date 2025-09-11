@@ -66,3 +66,15 @@ export function getPreferredCulture() {
 	console.log(culture);
 	return culture;
 }
+
+/**
+ * Sets the BlazorCulture cookie to the specified culture with a 1-year expiration.
+ * @param {string} culture - The culture code to set (e.g., "en", "cs").
+ * @returns {void}
+ */
+export function setBlazorCultureCookie(culture) {
+	// jednoduchá cookie (ne HttpOnly), exspirace 1 rok
+	const d = new Date();
+	d.setFullYear(d.getFullYear() + 1);
+	document.cookie = `BlazorCulture=${encodeURIComponent(culture)}; path=/; expires=${d.toUTCString()}`;
+}

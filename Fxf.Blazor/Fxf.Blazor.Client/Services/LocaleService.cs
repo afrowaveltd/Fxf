@@ -42,6 +42,19 @@ public class LocaleService(IJSRuntime js) : ILocaleService, IAsyncDisposable
 		 => await (await Module()).InvokeAsync<string?>("getPreferredCulture");
 
 	/// <summary>
+	/// Saves the specified culture information in a browser cookie for use in Blazor applications.
+	/// </summary>
+	/// <remarks>This method sets a browser cookie to store the specified culture, enabling culture-specific
+	/// behavior in Blazor applications. The culture name must be a valid culture identifier.</remarks>
+	/// <param name="culture">The culture name to be saved, such as "en-US" or "fr-FR".</param>
+	/// <returns>A task that represents the asynchronous operation.</returns>
+	public async Task SaveCookieCultureAsync(string culture)
+	{
+		var mod = await Module();
+		await mod.InvokeVoidAsync("setBlazorCultureCookie", culture);
+	}
+
+	/// <summary>
 	/// Saves the user's preferred culture to local storage.
 	/// </summary>
 	/// <param name="culture">The culture code to save.</param>

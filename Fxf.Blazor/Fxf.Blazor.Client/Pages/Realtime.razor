@@ -1,8 +1,26 @@
 ﻿@page "/realtime"
 @rendermode InteractiveAuto
+@using Fxf.Blazor.Client.StaticClasses
 @using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Realtime> _t
 @inject NavigationManager Navigation
-<h3>Realtime</h3>
+<h3>@_t["Realtime"]</h3>
+<div>@_t["_test"]</div>
+<table>
+	<tr>
+		<th>klíč</th>
+		<th>hodnota</th>
+	</tr>
+	@if(LocaleDictionary.Locales != null)
+	foreach(var line in LocaleDictionary.Locales)
+	{
+		<tr>
+			<td>@line.Key</td>
+			<td>@line.Value</td>
+		</tr>
+	}
+</table>
 
 @code {
 	private HubConnection? hubConnection;
@@ -12,7 +30,7 @@
 		hubConnection = new HubConnectionBuilder()
 			.WithUrl(Navigation.ToAbsoluteUri("/localization_hub"))
 			.WithAutomaticReconnect()
-			.WithStatefulReconnect()
+			
 			.Build();
 		hubConnection.On<string>("ReceiveMessage", (message) =>
 		{
@@ -20,11 +38,18 @@
 			StateHasChanged();
 		});
 
-		await hubConnection.StartAsync();
 
-		Console.WriteLine(hubConnection.ConnectionId);
+
+		await hubConnection.StartAsync();
+		Console.WriteLine($"Connected: {hubConnection.ConnectionId}");
+		Task.Run(() => ReloadLater(500));
+
+	}
+
+	private async Task ReloadLater(int time = 500)
+	{
+		await Task.Delay(time);
 		StateHasChanged();
-		
-		
+		Console.WriteLine("Count is" + LocaleDictionary.Locales.Count);
 	}
 }

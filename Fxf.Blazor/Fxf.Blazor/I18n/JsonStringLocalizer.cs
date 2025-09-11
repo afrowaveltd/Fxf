@@ -16,7 +16,7 @@ public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService
 	private IDistributedCache _cache = cache;
 	private ILibreTranslateService _translationService = translationService;
 
-	private string LocalesPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory
+	private static string LocalesPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory
 [..AppDomain.CurrentDomain.BaseDirectory
 		.IndexOf("bin")], "Locales");
 
@@ -126,7 +126,7 @@ public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService
 		return File.Exists(filePath) ? filePath : Path.Combine(LocalesPath, "en.json");
 	}
 
-	private string? GetValueFromJson(string key, string filePath)
+	private static string? GetValueFromJson(string key, string filePath)
 	{
 		if(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
 		{

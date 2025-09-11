@@ -416,6 +416,57 @@ public class LocalizationController(ILanguageService languageService,
 		return Ok(new UiLocale() { Locale = cult });
 	}
 
+	/// <summary>
+	/// Retrieves the full list of available Libre languages and their details.
+	/// </summary>
+	/// <remarks>This method fetches the list of available languages from an external source and processes it to
+	/// return detailed information. If no languages are available or an error occurs during processing, an appropriate
+	/// HTTP status code is returned.</remarks>
+	/// <returns>An <see cref="IActionResult"/> containing the following: <list type="bullet"> <item><description><see
+	/// cref="OkObjectResult"/> with the list of languages if the operation is successful.</description></item>
+	/// <item><description><see cref="NotFoundResult"/> if no languages are available or the processed data is
+	/// null.</description></item> <item><description><see cref="BadRequestObjectResult"/> with an error message if the
+	/// operation fails.</description></item> </list></returns>
+	[HttpGet("get_libre_languages_full_list")]
+	public async Task<IActionResult> GetLibreLanguagesFullListAsync()
+	{
+		var response = await GetLibreAvailableLanguages();
+		if(response.Count == 0)
+		{
+			return NotFound();
+		}
+
+		var languages = _languageService.GetSelectedLanguagesInfo(response);
+		if(languages == null)
+		{
+			return NotFound();
+		}
+		if(languages.Success)
+		{
+			return Ok(languages.Data);
+		}
+		else
+		{
+			return BadRequest(languages.Message);
+		}
+	}
+
+	/// <summary>
+	/// Retrieves a list of available language codes from the Libre service.
+	/// </summary>
+	/// <remarks>This method asynchronously fetches the available language codes supported by the Libre service and
+	/// returns them in the response. The response is formatted as an HTTP 200 OK result containing the list of language
+	/// codes.</remarks>
+	/// <returns>An <see cref="IActionResult"/> containing an HTTP 200 OK response with the list of available language codes, or an
+	/// appropriate error response if the operation fails.</returns>
+
+	[HttpGet("get_libre_languages_code_list")]
+	public async Task<IActionResult> GetLibreLanguagesCodeListAsync()
+	{
+		var response = await GetLibreAvailableLanguages();
+		return Ok(response);
+	}
+
 	private string? GetCultureFromRequest(HttpContext context)
 	{
 		string? culture = _cookieService.GetCookie("BlazorCulture");
@@ -434,5 +485,16 @@ public class LocalizationController(ILanguageService languageService,
 			return culture;
 		}
 		return "en";
+	}
+
+	private async Task<List<string>> GetLibreAvailableLanguages()
+	{
+		Response<string[]> languages = await _libre.GetAvailableLanguagesAsync();
+		if(languages.Success)
+		{
+			return languages.Data.ToList() ?? new List<string>();
+		}
+		Console.WriteLine(languages.Message);
+		return [];
 	}
 }

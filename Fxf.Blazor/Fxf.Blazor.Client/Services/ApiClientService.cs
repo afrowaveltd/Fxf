@@ -8,9 +8,14 @@ namespace Fxf.Blazor.Client.Services;
 /// Provides strongly-typed access to the backend localization / translation API.
 /// Handles loading/storing locale dictionaries, language metadata and performing text translations.
 /// </summary>
-public class ApiClientService : IApiClientService
+/// <remarks>
+/// Creates a new <see cref="ApiClientService"/> with a configured <see cref="HttpClient"/>.
+/// Ensures the base address ends with "/api/".
+/// </remarks>
+/// <param name="client">The underlying <see cref="HttpClient"/> (injected).</param>
+public class ApiClientService(HttpClient client) : IApiClientService
 {
-	private readonly HttpClient _client;
+	private readonly HttpClient _client = client;
 	private readonly string getLocalesUri = "/localization/get_locales";                    // done
 	private readonly string getSupportedLanguagesUri = "/localization/get_languages";       // done
 	private readonly string getLanguageInfoUri = "/localization/get_language_info";         // done
@@ -20,17 +25,8 @@ public class ApiClientService : IApiClientService
 	private readonly string saveBulkUri = "/localization/save_locale_bulk";                 // done
 	private readonly string getOldUri = "/localization/get_old";                            // done
 	private readonly string saveOldUri = "/localization/save_old";                          // done
-
-	/// <summary>
-	/// Creates a new <see cref="ApiClientService"/> with a configured <see cref="HttpClient"/>.
-	/// Ensures the base address ends with "/api/".
-	/// </summary>
-	/// <param name="client">The underlying <see cref="HttpClient"/> (injected).</param>
-	public ApiClientService()
-	{
-		_client = new HttpClient();
-		_client.BaseAddress = new Uri(_client.BaseAddress!.AbsoluteUri.TrimEnd('/') + "/api/");
-	}
+	private readonly string getLibreLanguagesCodesListUri = "/localization/get_libre_languages_code_list";
+	private readonly string getLibreLanguagesFullListUri = "/localization/get_libre_languages_full_list";
 
 	/// <summary>
 	/// Gets the underlying <see cref="HttpClient"/> instance for advanced scenarios.
@@ -56,6 +52,7 @@ public class ApiClientService : IApiClientService
 			if(actual_dictionary != null)
 			{
 				LocaleDictionary.Locales = actual_dictionary;
+				Console.WriteLine($"Found: {LocaleDictionary.Locales} translations");
 				return;
 			}
 
@@ -63,7 +60,7 @@ public class ApiClientService : IApiClientService
 			{
 				return; // nothing more we can do
 			}
-
+			Console.WriteLine($"Locale not found");
 			await LoadDefaultDictionary().ConfigureAwait(false);
 		}
 	}
@@ -260,6 +257,47 @@ public class ApiClientService : IApiClientService
 		{
 			Console.WriteLine("Error saving old translation");
 		}
+	}
+
+	/// <summary>
+	/// Retrieves a list of language codes supported by the Libre service.
+	/// </summary>
+	/// <remarks>This method sends an HTTP GET request to the Libre service to fetch the list of supported language
+	/// codes. The returned array contains language codes in string format, such as "en" for English or "fr" for
+	/// French.</remarks>
+	/// <returns>An array of strings representing the supported language codes.  Returns an empty array if the request fails or the
+	/// response is empty.</returns>
+	public async Task<string[]> GetLibreLanguagesCodes()
+	{
+		string url = getLibreLanguagesCodesListUri;
+		var response = await _client.GetAsync(url);
+		if(response.IsSuccessStatusCode)
+		{
+			var result = await response.Content.ReadFromJsonAsync<string[]>().ConfigureAwait(false);
+			return result ?? [];
+		}
+		return [];
+	}
+
+	/// <summary>
+	/// Retrieves the full list of available languages from the Libre service.
+	/// </summary>
+	/// <remarks>This method sends an HTTP GET request to the Libre service to fetch the list of supported
+	/// languages. If the request is successful, the method returns the list of languages. If the request fails or the
+	/// response is empty, an empty list is returned.</remarks>
+	/// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Language"/>
+	/// objects representing the available languages. Returns an empty list if the request fails or no languages are
+	/// available.</returns>
+	public async Task<List<Language>> GetLibreLanguages()
+	{
+		string url = getLibreLanguagesFullListUri;
+		var response = await _client.GetAsync(url);
+		if(response.IsSuccessStatusCode)
+		{
+			var result = await response.Content.ReadFromJsonAsync<List<Language>>().ConfigureAwait(false);
+			return result ?? [];
+		}
+		return [];
 	}
 
 	/// <summary>
