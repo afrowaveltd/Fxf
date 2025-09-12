@@ -13,11 +13,17 @@ namespace Fxf.Blazor.Services.LibreTranslate;
 /// query available languages, translate text and files, and detect language.
 /// Uses <see cref="IHttpService"/> for HTTP operations and supports retries based on <see cref="Translator"/> settings.
 /// </summary>
-public class LibreTranslateService : ILibreTranslateService
+/// <remarks>
+/// Initializes a new instance of the <see cref="LibreTranslateService"/> class.
+/// </remarks>
+/// <param name="configuration">Application configuration containing the <c>Translator</c> section.</param>
+/// <param name="httpService">HTTP abstraction used to perform API calls.</param>
+/// <param name="hub">SignalR hub context for server push notifications (reserved for future use).</param>
+public class LibreTranslateService(IConfiguration configuration, IHttpService httpService, IHubContext<LocalizationHub> hub) : ILibreTranslateService
 {
-	private readonly Translator _translatorOptions;
-	private readonly IHttpService _httpService;
-	private readonly IHubContext<LocalizationHub> _hub;
+	private readonly Translator _translatorOptions = configuration.GetSection("Translators").Get<List<Translator>>()?[0] ?? new Translator();
+	private readonly IHttpService _httpService = httpService;
+	private readonly IHubContext<LocalizationHub> _hub = hub;
 
 	private readonly JsonSerializerOptions _options = new()
 	{
@@ -25,19 +31,6 @@ public class LibreTranslateService : ILibreTranslateService
 		DefaultIgnoreCondition = JsonIgnoreCondition.Never,
 		ReferenceHandler = ReferenceHandler.IgnoreCycles
 	};
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="LibreTranslateService"/> class.
-	/// </summary>
-	/// <param name="configuration">Application configuration containing the <c>Translator</c> section.</param>
-	/// <param name="httpService">HTTP abstraction used to perform API calls.</param>
-	/// <param name="hub">SignalR hub context for server push notifications (reserved for future use).</param>
-	public LibreTranslateService(IConfiguration configuration, IHttpService httpService, IHubContext<LocalizationHub> hub)
-	{
-		_translatorOptions = configuration.GetSection("Translator").Get<Translator>() ?? new Translator();
-		_httpService = httpService;
-		_hub = hub;
-	}
 
 	/// <summary>
 	/// Gets the list of available language codes from the translation service.

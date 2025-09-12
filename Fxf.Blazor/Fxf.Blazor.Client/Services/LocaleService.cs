@@ -94,5 +94,6 @@ public class LocaleService(IJSRuntime js) : ILocaleService, IAsyncDisposable
 		{
 			try { await _mod.DisposeAsync(); } catch { /* ignore */ }
 		}
+		GC.SuppressFinalize(this);
 	}
 }

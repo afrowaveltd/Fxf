@@ -84,7 +84,7 @@ public class JsonStringLocalizer
 			Console.WriteLine("Locales are loaded");
 			return;
 		}
-
+		Console.WriteLine("Locales are loading");
 		var culture = GetPreferredCultureSafe();
 		LoadDictionary(culture);
 		if(LocaleDictionary.Locales is null || LocaleDictionary.Locales.Count == 0)
@@ -187,9 +187,8 @@ public class JsonStringLocalizer
 		}
 	}
 
-	private IEnumerable<LocalizedString> GetAllStringsInternal(bool includeParentCultures)
+	private static IEnumerable<LocalizedString> GetAllStringsInternal(bool includeParentCultures)
 	{
-		EnsureLocalesLoaded();
 		if(LocaleDictionary.Locales is null) yield break;
 		foreach(var kvp in LocaleDictionary.Locales)
 			yield return new LocalizedString(kvp.Key, kvp.Value, resourceNotFound: false);

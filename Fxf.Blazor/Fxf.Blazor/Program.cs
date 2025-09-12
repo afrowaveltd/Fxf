@@ -9,7 +9,6 @@ using Fxf.Blazor.Services.LibreTranslate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
@@ -62,7 +61,7 @@ builder.Services.AddAntiforgery(options =>
 	 {
 		 options.HeaderName = "X-XSRF-TOKEN";
 		 options.Cookie.Name = "XSRF-TOKEN";
-		 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+		 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
 		 options.Cookie.SameSite = SameSiteMode.Strict;
 		 options.Cookie.HttpOnly = false;
 	 });
@@ -118,11 +117,6 @@ builder.Services.AddSignalR()
 		 o.PayloadSerializerOptions.PropertyNamingPolicy = null; // nechá PascalCase pokud používáš
 	 });
 builder.Services.AddMemoryCache();
-builder.Services.AddResponseCompression(opts =>
-{
-	opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-		 ["application/octet-stream"]);
-});
 
 var app = builder.Build();
 
@@ -180,7 +174,6 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 app.MapControllers();
 // Here we add starting procedures for localization.
-app.UseResponseCompression();
 app.MapHub<LocalizationHub>("/localization_hub");
 
 app.Run();

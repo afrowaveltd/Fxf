@@ -16,17 +16,21 @@ namespace Fxf.Blazor.Client.Services;
 public class ApiClientService(HttpClient client) : IApiClientService
 {
 	private readonly HttpClient _client = client;
-	private readonly string getLocalesUri = "/localization/get_locales";                    // done
-	private readonly string getSupportedLanguagesUri = "/localization/get_languages";       // done
-	private readonly string getLanguageInfoUri = "/localization/get_language_info";         // done
-	private readonly string getLanguageByCodeUri = "/localization/get_language_by_code";    // done
-	private readonly string localizeUri = "/localization/localize";                         // done
-	private readonly string saveLocaleUri = "/localization/save_locale";                    // done
-	private readonly string saveBulkUri = "/localization/save_locale_bulk";                 // done
-	private readonly string getOldUri = "/localization/get_old";                            // done
-	private readonly string saveOldUri = "/localization/save_old";                          // done
-	private readonly string getLibreLanguagesCodesListUri = "/localization/get_libre_languages_code_list";
-	private readonly string getLibreLanguagesFullListUri = "/localization/get_libre_languages_full_list";
+
+	// Base route segment for localization controller
+	private const string Base = "api/Localization"; // Matches [Route("api/[controller]")]
+
+	private readonly string getLocalesUri = $"{Base}/get_locales";                    // done
+	private readonly string getSupportedLanguagesUri = $"{Base}/get_languages";       // done
+	private readonly string getLanguageInfoUri = $"{Base}/get_language_info";         // done
+	private readonly string getLanguageByCodeUri = $"{Base}/get_language_by_code";    // done
+	private readonly string localizeUri = $"{Base}/localize";                         // done
+	private readonly string saveLocaleUri = $"{Base}/save_locale";                    // done
+	private readonly string saveBulkUri = $"{Base}/save_locale_bulk";                 // done
+	private readonly string getOldUri = $"{Base}/get_old";                            // done
+	private readonly string saveOldUri = $"{Base}/save_old";                          // done
+	private readonly string getLibreLanguagesCodesListUri = $"{Base}/get_libre_languages_code_list";
+	private readonly string getLibreLanguagesFullListUri = $"{Base}/get_libre_languages_full_list";
 
 	/// <summary>
 	/// Gets the underlying <see cref="HttpClient"/> instance for advanced scenarios.
@@ -43,16 +47,16 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	{
 		code ??= "en";
 
-		string url = getLanguageByCodeUri + "/" + code + "/" + isClient;
+		string url = $"{getLanguageByCodeUri}/{code}/{isClient}";
 
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var actual_dictionary = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>().ConfigureAwait(false);
+			var actual_dictionary = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
 			if(actual_dictionary != null)
 			{
 				LocaleDictionary.Locales = actual_dictionary;
-				Console.WriteLine($"Found: {LocaleDictionary.Locales} translations");
+				Console.WriteLine($"Found: {LocaleDictionary.Locales.Count} translations");
 				return;
 			}
 
@@ -61,33 +65,33 @@ public class ApiClientService(HttpClient client) : IApiClientService
 				return; // nothing more we can do
 			}
 			Console.WriteLine($"Locale not found");
-			await LoadDefaultDictionary().ConfigureAwait(false);
+			await LoadDefaultDictionary();
 		}
 	}
 
 	/// <summary>
 	/// Loads the default (English) client dictionary.
 	/// </summary>
-	public async Task LoadDefaultDictionary() => await LoadDictionary("en", true).ConfigureAwait(false);
+	public async Task LoadDefaultDictionary() => await LoadDictionary("en", true);
 
 	/// <summary>
 	/// Gets the server-side dictionary for a language code.
 	/// </summary>
 	/// <param name="code">Language code.</param>
 	/// <returns>The dictionary or an empty dictionary if unavailable.</returns>
-	public async Task<Dictionary<string, string>> GetServerDictionary(string code) => await GetDictionary(code, false).ConfigureAwait(false);
+	public async Task<Dictionary<string, string>> GetServerDictionary(string code) => await GetDictionary(code, false);
 
 	/// <summary>
 	/// Gets the client-side dictionary for a language code.
 	/// </summary>
 	/// <param name="code">Language code.</param>
 	/// <returns>The dictionary or an empty dictionary if unavailable.</returns>
-	public async Task<Dictionary<string, string>> GetClientDictionary(string code) => await GetDictionary(code, true).ConfigureAwait(false);
+	public async Task<Dictionary<string, string>> GetClientDictionary(string code) => await GetDictionary(code, true);
 
 	/// <summary>
 	/// Gets the default (English) client dictionary.
 	/// </summary>
-	public async Task<Dictionary<string, string>> GetDefaultDictionary() => await GetDictionary("en", true).ConfigureAwait(false);
+	public async Task<Dictionary<string, string>> GetDefaultDictionary() => await GetDictionary("en", true);
 
 	/// <summary>
 	/// Gets all locale translations (tree) for either client or server side.
@@ -96,17 +100,26 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <returns>A translation tree (possibly empty).</returns>
 	public async Task<TranslationTree> GetAllLocales(bool isClient)
 	{
-		string url = getLocalesUri + "/" + isClient;
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		string url = $"{getLocalesUri}/{isClient}";
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var actual_tree = await response.Content.ReadFromJsonAsync<Response<TranslationTree>>().ConfigureAwait(false);
-			if(actual_tree != null)
-			{
-				return actual_tree.Data ?? new();
-			}
+			// Kontroler vrací přímo TranslationTree, ne Response<TranslationTree>
+			var tree = await response.Content.ReadFromJsonAsync<TranslationTree>();
+			return tree ?? new();
 		}
 		return new();
+	}
+
+	private static async Task<(bool flowControl, TranslationTree value)> NewMethod(HttpResponseMessage response)
+	{
+		var actual_tree = await response.Content.ReadFromJsonAsync<Response<TranslationTree>>();
+		if(actual_tree != null)
+		{
+			return (flowControl: false, value: actual_tree.Data ?? new());
+		}
+
+		return (flowControl: true, value: null);
 	}
 
 	/// <summary>
@@ -116,10 +129,10 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	public async Task<List<Language>> GetFullLanguageList()
 	{
 		string url = getSupportedLanguagesUri;
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			return await response.Content.ReadFromJsonAsync<List<Language>>().ConfigureAwait(false) ?? [];
+			return await response.Content.ReadFromJsonAsync<List<Language>>() ?? [];
 		}
 		return [];
 	}
@@ -135,11 +148,11 @@ public class ApiClientService(HttpClient client) : IApiClientService
 		{
 			return new();
 		}
-		string url = getLanguageInfoUri + "/" + code;
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		string url = $"{getLanguageInfoUri}/{code}";
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			return await response.Content.ReadFromJsonAsync<Language>().ConfigureAwait(false) ?? new();
+			return await response.Content.ReadFromJsonAsync<Language>() ?? new();
 		}
 		return new();
 	}
@@ -171,11 +184,11 @@ public class ApiClientService(HttpClient client) : IApiClientService
 		}
 
 		string safeQuery = Uri.EscapeDataString(query);
-		string url = $"{localizeUri}/{safeQuery}/{from}/{to}";
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		string url = $"{localizeUri}/{safeQuery}/{to}/{from}"; // Note: controller expects localize/{query}/{target?}/{source?}
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var result = await response.Content.ReadFromJsonAsync<TranslateResult>().ConfigureAwait(false);
+			var result = await response.Content.ReadFromJsonAsync<TranslateResult>();
 			return result ?? new();
 		}
 		return new();
@@ -192,9 +205,9 @@ public class ApiClientService(HttpClient client) : IApiClientService
 		{
 			return;
 		}
-		string url = saveLocaleUri + "/" + code;
+		string url = $"{saveLocaleUri}/{code}";
 
-		var response = await _client.PostAsJsonAsync(url, dictionary).ConfigureAwait(false);
+		var response = await _client.PostAsJsonAsync(url, dictionary);
 		if(response.IsSuccessStatusCode)
 		{
 			Console.WriteLine("Stored successfully");
@@ -214,8 +227,8 @@ public class ApiClientService(HttpClient client) : IApiClientService
 		{
 			return;
 		}
-		string url = saveBulkUri + "/" + isClient;
-		var response = await _client.PostAsJsonAsync(url, translations).ConfigureAwait(false);
+		string url = $"{saveBulkUri}/{isClient}";
+		var response = await _client.PostAsJsonAsync(url, translations);
 		if(response.IsSuccessStatusCode)
 		{
 			Console.WriteLine("Stored successfully");
@@ -231,11 +244,11 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <returns>A dictionary (empty if unavailable).</returns>
 	public async Task<Dictionary<string, string>> GetOldTranslation(bool isClient)
 	{
-		string url = getOldUri + "/" + isClient;
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		string url = $"{getOldUri}/{isClient}";
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>().ConfigureAwait(false);
+			var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
 			return result ?? [];
 		}
 		return [];
@@ -247,8 +260,8 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <param name="isClient">True for client dictionary snapshot, false for server.</param>
 	public async Task SaveOldTranslation(bool isClient)
 	{
-		string url = saveOldUri + "/" + isClient;
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		string url = $"{saveOldUri}/{isClient}";
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
 			Console.WriteLine("Old translation saved successfully");
@@ -262,18 +275,13 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <summary>
 	/// Retrieves a list of language codes supported by the Libre service.
 	/// </summary>
-	/// <remarks>This method sends an HTTP GET request to the Libre service to fetch the list of supported language
-	/// codes. The returned array contains language codes in string format, such as "en" for English or "fr" for
-	/// French.</remarks>
-	/// <returns>An array of strings representing the supported language codes.  Returns an empty array if the request fails or the
-	/// response is empty.</returns>
 	public async Task<string[]> GetLibreLanguagesCodes()
 	{
 		string url = getLibreLanguagesCodesListUri;
 		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var result = await response.Content.ReadFromJsonAsync<string[]>().ConfigureAwait(false);
+			var result = await response.Content.ReadFromJsonAsync<string[]>();
 			return result ?? [];
 		}
 		return [];
@@ -282,19 +290,13 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <summary>
 	/// Retrieves the full list of available languages from the Libre service.
 	/// </summary>
-	/// <remarks>This method sends an HTTP GET request to the Libre service to fetch the list of supported
-	/// languages. If the request is successful, the method returns the list of languages. If the request fails or the
-	/// response is empty, an empty list is returned.</remarks>
-	/// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Language"/>
-	/// objects representing the available languages. Returns an empty list if the request fails or no languages are
-	/// available.</returns>
 	public async Task<List<Language>> GetLibreLanguages()
 	{
 		string url = getLibreLanguagesFullListUri;
 		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
-			var result = await response.Content.ReadFromJsonAsync<List<Language>>().ConfigureAwait(false);
+			var result = await response.Content.ReadFromJsonAsync<List<Language>>();
 			return result ?? [];
 		}
 		return [];
@@ -309,9 +311,9 @@ public class ApiClientService(HttpClient client) : IApiClientService
 	/// <returns>The dictionary or empty collection.</returns>
 	private async Task<Dictionary<string, string>> GetDictionary(string code, bool isClient)
 	{
-		string url = getLanguageByCodeUri + "/" + code + "/" + isClient;
+		string url = $"{getLanguageByCodeUri}/{code}/{isClient}";
 
-		var response = await _client.GetAsync(url).ConfigureAwait(false);
+		var response = await _client.GetAsync(url);
 		if(response.IsSuccessStatusCode)
 		{
 			var actual_dictionary = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
@@ -326,7 +328,7 @@ public class ApiClientService(HttpClient client) : IApiClientService
 			}
 
 			// Fallback to default dictionary and return it
-			return await GetDefaultDictionary().ConfigureAwait(false);
+			return await GetDefaultDictionary();
 		}
 		return [];
 	}

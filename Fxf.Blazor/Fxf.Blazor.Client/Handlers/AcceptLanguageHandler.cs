@@ -1,5 +1,13 @@
 ﻿namespace Fxf.Blazor.Client.Handlers;
 
+/// <summary>
+/// A message handler that sets the "Accept-Language" header for outgoing HTTP requests based on the culture provided by
+/// a delegate.
+/// </summary>
+/// <remarks>This handler is typically used to ensure that HTTP requests include an "Accept-Language" header
+/// reflecting the desired culture for localization purposes. The culture is determined dynamically by invoking the
+/// provided delegate for each request. If the delegate returns an empty string or <see langword="null"/>, the
+/// "Accept-Language" header will not be set.</remarks>
 public class AcceptLanguageHandler : DelegatingHandler
 {
 	private readonly Func<string> _getCulture;
@@ -29,7 +37,6 @@ public class AcceptLanguageHandler : DelegatingHandler
 		var lang = _getCulture();
 		if(!string.IsNullOrWhiteSpace(lang))
 		{
-			// Můžeš přidat i fallback weight např. "cs,en;q=0.9"
 			req.Headers.AcceptLanguage.Clear();
 			req.Headers.AcceptLanguage.ParseAdd(lang);
 		}
