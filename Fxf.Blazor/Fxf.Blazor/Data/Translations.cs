@@ -8,9 +8,8 @@ namespace Fxf.Blazor.Data;
 public class Translations
 {
 	/// <summary>
-	/// Gets or sets the UTC start time for the translation process.
+	/// Gets or sets the start time for the operation or event in Coordinated Universal Time (UTC).
 	/// </summary>
-	[Key]
 	public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
 	/// <summary>

@@ -35,50 +35,24 @@ public class WorkerResults
 	public WorkerStatus LastStatus { get; set; } = WorkerStatus.Iddle;
 
 	/// <summary>
-	/// Gets or sets the unique identifier for the cycle checks record.
-	/// </summary>
-	public int CycleChecksId { get; set; }
-
-	/// <summary>
-	/// Gets or sets the unique identifier for the language translation entry.
-	/// </summary>
-	public int LanguagesTranslationsId { get; set; }
-
-	/// <summary>
-	/// Gets or sets the unique identifier for the translation request.
-	/// </summary>
-	public int TranslationRequestsId { get; set; }
-
-	/// <summary>
-	/// Gets or sets the unique identifier for the translation results.
-	/// </summary>
-	public int TranslationResultsId { get; set; }
-
-	/// <summary>
-	/// Gets or sets the unique identifier for the worker error entry.
-	/// </summary>
-
-	public int WorkerErrorId { get; set; }
-
-	/// <summary>
 	/// Gets or sets the cycle checks performed during the worker process.
 	/// </summary>
-	public CycleChecks CycleChecks { get; set; } = null!;
+	public CycleChecks CycleChecks { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets the language translation statistics for the worker process.
 	/// </summary>
-	public LanguagesTranslations LanguagesTranslations { get; set; } = null!;
+	public LanguagesTranslations LanguagesTranslations { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets the translation requests made during the worker process.
 	/// </summary>
-	public TranslationRequests TranslationRequests { get; set; } = null!;
+	public TranslationRequests TranslationRequests { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets the translation results produced by the worker process.
 	/// </summary>
-	public TranslationResults TranslationResults { get; set; } = null!;
+	public TranslationResults TranslationResults { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets a list of error messages, keyed by worker status.

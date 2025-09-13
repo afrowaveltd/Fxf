@@ -8,18 +8,14 @@ namespace Fxf.Blazor.Data;
 public class TranslationRequests
 {
 	/// <summary>
-	/// Gets or sets the unique identifier for the entity.
+	/// Gets or sets the language code for which the translation requests are tracked.
 	/// </summary>
-	[Key]
-	public int Id { get; set; }
-   /// <summary>
-   /// Gets or sets the language code for which the translation requests are tracked.
-   /// </summary>
-   public string LanguageCode { get; set; } = string.Empty;
-   /// <summary>
-   /// Gets or sets the number of translation requests to add.
-   /// </summary>
-   public int ToAdd { get; set; } = 0;
+	public string LanguageCode { get; set; } = string.Empty;
+
+	/// <summary>
+	/// Gets or sets the number of translation requests to add.
+	/// </summary>
+	public int ToAdd { get; set; } = 0;
 
 	/// <summary>
 	/// Gets or sets the number of translation requests to remove.

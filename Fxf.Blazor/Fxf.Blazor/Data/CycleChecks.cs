@@ -8,12 +8,6 @@ namespace Fxf.Blazor.Data;
 public class CycleChecks
 {
 	/// <summary>
-	/// Gets or sets the unique identifier for the cycle checks entry.
-	/// </summary>
-	[Key]
-	public int Id { get; set; }
-
-	/// <summary>
 	/// Gets or sets a value indicating whether settings were loaded successfully.
 	/// </summary>
 	public bool SettingsLoaded { get; set; } = false;
@@ -44,16 +38,6 @@ public class CycleChecks
 	public int LibreLanguagesCount { get; set; } = 0;
 
 	/// <summary>
-	/// Gets or sets the unique identifier for the frontend translations resource.
-	/// </summary>
-	public int FrontendTranslationsId { get; set; }
-
-	/// <summary>
-	/// Gets or sets the unique identifier for the backend translations entry.
-	/// </summary>
-	public int BackendTranslationsId { get; set; }
-
-	/// <summary>
 	/// Gets or sets the frontend translations check results.
 	/// </summary>
 	public Translations FrontendTranslations { get; set; } = new();
@@ -62,9 +46,4 @@ public class CycleChecks
 	/// Gets or sets the backend translations check results.
 	/// </summary>
 	public Translations BackendTranslations { get; set; } = new();
-
-	/// <summary>
-	/// Gets or sets the results produced by the worker operation.
-	/// </summary>
-	public WorkerResults WorkerResults { get; set; } = null!;
 }

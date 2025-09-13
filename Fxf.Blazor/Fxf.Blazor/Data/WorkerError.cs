@@ -12,12 +12,6 @@ namespace Fxf.Blazor.Data;
 public class WorkerError
 {
 	/// <summary>
-	/// Gets or sets the unique identifier for the entity.
-	/// </summary>
-	[Key]
-	public int Id { get; set; }
-
-	/// <summary>
 	/// Gets or sets the date and time value associated with this instance.
 	/// </summary>
 	public DateTime Time { get; set; } = DateTime.UtcNow;

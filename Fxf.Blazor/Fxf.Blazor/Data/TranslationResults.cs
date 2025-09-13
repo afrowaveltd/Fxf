@@ -8,12 +8,6 @@ namespace Fxf.Blazor.Data;
 public class TranslationResults
 {
 	/// <summary>
-	/// Gets or sets the unique identifier for the entity.
-	/// </summary>
-	[Key]
-	public int Id { get; set; }
-
-	/// <summary>
 	/// Gets or sets the language code for which the translation results are tracked.
 	/// </summary>
 	public string LanguageCode { get; set; } = string.Empty;
