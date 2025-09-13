@@ -1,59 +1,87 @@
-﻿using static Fxf.Blazor.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using static Fxf.Blazor.Models.Enums;
 
 namespace Fxf.Blazor.Data;
 
+/// <summary>
+/// Represents the results and status information of a background worker process, including timing, success state, errors, and translation details.
+/// </summary>
 public class WorkerResults
 {
+	/// <summary>
+	/// Gets or sets the unique identifier for the worker results entry.
+	/// </summary>
+	[Key]
+	public int Id { get; set; }
+
+	/// <summary>
+	/// Gets or sets the UTC start time of the worker process.
+	/// </summary>
 	public DateTime StartTime { get; set; } = DateTime.UtcNow;
+
+	/// <summary>
+	/// Gets or sets the UTC end time of the worker process.
+	/// </summary>
 	public DateTime EndTime { get; set; } = DateTime.UtcNow;
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the worker process completed successfully.
+	/// </summary>
 	public bool Successful { get; set; } = true;
-	public Dictionary<WorkerStatus, string> ErrorMessages { get; set; } = [];
+
+	/// <summary>
+	/// Gets or sets the last status of the worker process.
+	/// </summary>
 	public WorkerStatus LastStatus { get; set; } = WorkerStatus.Iddle;
-	public CycleChecks CycleChecks { get; set; } = new();
-}
 
-public class CycleChecks
-{
-	public bool SettingsLoaded { get; set; } = false;
-	public DateTime StartTime { get; set; } = DateTime.UtcNow;
-	public DateTime EndTime { get; set; } = DateTime.UtcNow;
-	public bool DefaultTranslationFound { get; set; } = true;
-	public bool IgnoredLanguagesFound { get; set; } = true;
-	public int LibreLanguagesCount { get; set; } = 0;
-	public Translations FrontendTranslations { get; set; }
-	public Translations BackendTranslations { get; set; }
-}
+	/// <summary>
+	/// Gets or sets the unique identifier for the cycle checks record.
+	/// </summary>
+	public int CycleChecksId { get; set; }
 
-public class LanguagesTranslations
-{
-	public int TranslationsNeeded { get; set; } = 0;
-	public int TranslationsDone { get; set; } = 0;
-	public int TranslationErrors { get; set; } = 0;
-	public Dictionary<string, List<string>> FailedTranslations { get; set; } = [];
-	public DateTime StartTime { get; set; } = DateTime.UtcNow;
-	public DateTime EndTime { get; set; } = DateTime.UtcNow;
-}
+	/// <summary>
+	/// Gets or sets the unique identifier for the language translation entry.
+	/// </summary>
+	public int LanguagesTranslationsId { get; set; }
 
-public class Translations
-{
-	public DateTime StartTime { get; set; } = DateTime.UtcNow;
-	public DateTime EndTime { get; set; } = DateTime.UtcNow;
-	public bool OldFileFound { get; set; } = false;
+	/// <summary>
+	/// Gets or sets the unique identifier for the translation request.
+	/// </summary>
+	public int TranslationRequestsId { get; set; }
 
-	public int TranslationsNeeded { get; set; } = 0;
-	public Dictionary<string, TranslationRequests> RequestedTranslations { get; set; } = [];
-	public Dictionary<string, TranslationResults> ResultOfTranslating { get; set; } = [];
-}
+	/// <summary>
+	/// Gets or sets the unique identifier for the translation results.
+	/// </summary>
+	public int TranslationResultsId { get; set; }
 
-public class TranslationRequests
-{
-	public int ToAdd { get; set; } = 0;
-	public int ToRemove { get; set; } = 0;
-	public int ToUpdate { get; set; } = 0;
-}
+	/// <summary>
+	/// Gets or sets the unique identifier for the worker error entry.
+	/// </summary>
 
-public class TranslationResults
-{
-	public int SuccessfulTranslations { get; set; }
-	public Dictionary<string, string> TranslationErrors { get; set; }
+	public int WorkerErrorId { get; set; }
+
+	/// <summary>
+	/// Gets or sets the cycle checks performed during the worker process.
+	/// </summary>
+	public CycleChecks CycleChecks { get; set; } = null!;
+
+	/// <summary>
+	/// Gets or sets the language translation statistics for the worker process.
+	/// </summary>
+	public LanguagesTranslations LanguagesTranslations { get; set; } = null!;
+
+	/// <summary>
+	/// Gets or sets the translation requests made during the worker process.
+	/// </summary>
+	public TranslationRequests TranslationRequests { get; set; } = null!;
+
+	/// <summary>
+	/// Gets or sets the translation results produced by the worker process.
+	/// </summary>
+	public TranslationResults TranslationResults { get; set; } = null!;
+
+	/// <summary>
+	/// Gets or sets a list of error messages, keyed by worker status.
+	/// </summary>
+	public List<WorkerError> ErrorMessages { get; set; } = [];
 }
