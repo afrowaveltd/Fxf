@@ -1,6 +1,6 @@
 using Fxf.Blazor.Components.Account.Pages;
 using Fxf.Blazor.Components.Account.Pages.Manage;
-using Fxf.Blazor.Data;
+using Fxf.Blazor.Data.Entities;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;

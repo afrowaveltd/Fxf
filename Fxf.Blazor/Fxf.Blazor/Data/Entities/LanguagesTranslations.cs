@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fxf.Blazor.Data;
+namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents statistics and errors related to language translations during a worker process.

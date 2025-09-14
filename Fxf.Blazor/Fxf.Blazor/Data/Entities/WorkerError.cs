@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using static Fxf.Blazor.Models.Enums;
 
-namespace Fxf.Blazor.Data;
+namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents an error that occurred during the execution of a worker process.

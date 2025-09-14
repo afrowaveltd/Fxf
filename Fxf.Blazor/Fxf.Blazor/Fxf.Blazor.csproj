@@ -34,6 +34,7 @@
     <Folder Include="Locales\" />
     <Folder Include="LocalesClient\" />
     <Folder Include="Models\Entity\" />
+    <Folder Include="Models\WorkerModels\" />
   </ItemGroup>
 
 </Project>

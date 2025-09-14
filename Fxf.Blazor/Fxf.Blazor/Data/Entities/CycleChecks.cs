@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fxf.Blazor.Data;
+namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents the results of various checks performed during a worker cycle, including translation and settings checks.
@@ -25,7 +25,12 @@ public class CycleChecks
 	/// <summary>
 	/// Gets or sets a value indicating whether the default translation was found.
 	/// </summary>
-	public bool DefaultTranslationFound { get; set; } = true;
+	public bool DefaultServerTranslationFound { get; set; } = true;
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the default client translation was found.
+	/// </summary>
+	public bool DefaultClientTranslationFound { get; set; } = true;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether ignored languages were found.

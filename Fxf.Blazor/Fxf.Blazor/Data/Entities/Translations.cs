@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fxf.Blazor.Data;
+namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents translation details for a specific set of resources, including timing and translation requests/results.

@@ -1,4 +1,4 @@
-using Fxf.Blazor.Data;
+using Fxf.Blazor.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

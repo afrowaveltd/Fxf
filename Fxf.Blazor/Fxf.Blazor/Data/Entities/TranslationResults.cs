@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fxf.Blazor.Data;
+namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents the results of translation operations, including successful translations and errors.

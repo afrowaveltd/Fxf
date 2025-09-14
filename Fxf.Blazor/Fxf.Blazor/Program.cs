@@ -1,6 +1,7 @@
 using Fxf.Blazor.Components;
 using Fxf.Blazor.Components.Account;
 using Fxf.Blazor.Data;
+using Fxf.Blazor.Data.Entities;
 using Fxf.Blazor.Hubs;
 using Fxf.Blazor.I18n;
 using Fxf.Blazor.Middlewares;

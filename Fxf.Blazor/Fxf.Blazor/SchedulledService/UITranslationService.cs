@@ -1,19 +1,25 @@
 ﻿using Fxf.Blazor.Data;
+using Fxf.Blazor.Data.Entities;
+using Fxf.Blazor.Hubs;
 using Fxf.Blazor.Models.Settings;
 using Fxf.Blazor.Services;
 using Fxf.Blazor.Services.LibreTranslate;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Fxf.Blazor.SchedulledService;
 
 public class UITranslationService(IConfiguration configuration,
 	ILibreTranslateService libreTranslateService,
 	ILanguageService languageService,
-	ApplicationDbContext context) : IUITranslationService
+	ApplicationDbContext context,
+	IHubContext<WorkerHub> workerHub) : IUITranslationService
 {
 	private readonly IConfiguration _configuration = configuration;
 	private readonly ILibreTranslateService _libreTranslateService = libreTranslateService;
 	private readonly ILanguageService _languageService = languageService;
 	private readonly ApplicationDbContext _context = context;
+	private readonly IHubContext<WorkerHub> _workerHub = workerHub;
 	private string DefaultLanguage => _configuration.GetSection("Localization").Get<Localization>()?.DefaultLanguage ?? "en";
 	private List<string> IgnoredLanguages => _configuration.GetSection("Localization").Get<Localization>()?.IgnoredLanguages ?? new List<string> { "en" };
 
@@ -37,5 +43,14 @@ public class UITranslationService(IConfiguration configuration,
 		 * -- Return results
 		 * store to the DB's changed time
 		 */
+
+		var workerResult = new WorkerResult
+		{
+			StartTime = DateTime.UtcNow,
+			CycleChecks = new CycleChecks
+			{
+				StartTime = DateTime.UtcNow,
+			}
+		};
 	}
 }

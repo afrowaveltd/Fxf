@@ -1,3 +1,4 @@
+using Fxf.Blazor.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -13,6 +14,11 @@ namespace Fxf.Blazor.Data
 	/// <param name="options"></param>
 	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 	{
+		/// <summary>
+		/// Gets or sets the collection of SignalR connection entities for the context.
+		/// </summary>
+		public DbSet<SignalRConnection> SignalRConnections { get; set; } = null!;
+
 		/// <summary>
 		/// Gets or sets the collection of worker results in the database context.
 		/// </summary>
@@ -141,6 +147,16 @@ namespace Fxf.Blazor.Data
 				em.Property<int>("Id").ValueGeneratedOnAdd();
 				em.HasKey("Id");
 				em.HasIndex("WorkerResultsId");
+			});
+
+			builder.Entity<SignalRConnection>(entity =>
+			{
+				entity.ToTable("SignalRConnections");
+				entity.HasKey(e => e.Id);
+				entity.HasOne(s => s.User)
+					  .WithMany(u => u.Connections)
+					  .HasForeignKey(s => s.UserId)
+					  .OnDelete(DeleteBehavior.SetNull);
 			});
 		}
 	}

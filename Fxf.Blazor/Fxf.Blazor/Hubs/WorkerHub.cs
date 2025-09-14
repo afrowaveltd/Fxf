@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Fxf.Blazor.Data;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Fxf.Blazor.Hubs;
 
-public class WorkerHub : Hub
+public class WorkerHub(ApplicationDbContext context) : Hub
 {
+	private readonly ApplicationDbContext _context = context;
 }
