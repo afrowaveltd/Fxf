@@ -6,15 +6,15 @@ using Microsoft.Extensions.Localization;
 namespace Fxf.Blazor.Client.I18n;
 
 /// <summary>
-/// Provides JSON-backed string localization for the Blazor client.
-/// Loads translation dictionaries on-demand via <see cref="IApiClientService"/> and resolves
-/// individual keys, performing a remote translation fallback when a key is missing.
+/// Provides JSON-backed string localization for the Blazor client. Loads translation dictionaries
+/// on-demand via <see cref="IApiClientService"/> and resolves individual keys, performing a remote
+/// translation fallback when a key is missing.
 /// </summary>
 public class JsonStringLocalizer
 {
+	private const string DefaultCulture = "en";
 	private readonly IApiClientService _api;
 	private readonly ILocaleService? _locale;
-	private const string DefaultCulture = "en";
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="JsonStringLocalizer"/> class.
@@ -66,13 +66,20 @@ public class JsonStringLocalizer
 	}
 
 	/// <summary>
-	/// Returns all localized strings currently available in the loaded dictionary.
-	/// If the dictionary is not yet loaded it will be loaded for the preferred (or default) culture.
+	/// Returns all localized strings currently available in the loaded dictionary. If the dictionary
+	/// is not yet loaded it will be loaded for the preferred (or default) culture.
 	/// </summary>
 	/// <param name="includeParentCultures">Ignored (included for API compatibility).</param>
 	/// <returns>Enumeration of localized strings.</returns>
 	public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
 		 => GetAllStringsInternal(includeParentCultures);
+
+	private static IEnumerable<LocalizedString> GetAllStringsInternal(bool includeParentCultures)
+	{
+		if(LocaleDictionary.Locales is null) yield break;
+		foreach(var kvp in LocaleDictionary.Locales)
+			yield return new LocalizedString(kvp.Key, kvp.Value, resourceNotFound: false);
+	}
 
 	/// <summary>
 	/// Ensures the in-memory dictionary is loaded for the preferred (or default) culture.
@@ -92,6 +99,25 @@ public class JsonStringLocalizer
 			// Fallback to default culture if initial culture failed.
 			Console.WriteLine($"Falling back to default culture {DefaultCulture}");
 			LoadDictionary(DefaultCulture);
+		}
+	}
+
+	/// <summary>
+	/// Gets the preferred culture from the locale service or falls back to the default culture.
+	/// </summary>
+	private string GetPreferredCultureSafe()
+	{
+		if(_locale is null)
+		{
+			return DefaultCulture;
+		}
+		try
+		{
+			return _locale.GetPreferredCultureAsync().GetAwaiter().GetResult() ?? DefaultCulture;
+		}
+		catch
+		{
+			return DefaultCulture;
 		}
 	}
 
@@ -166,31 +192,5 @@ public class JsonStringLocalizer
 			Console.WriteLine($"Translation failed: {ex.Message}");
 			return new TranslateResult { TranslatedText = text };
 		}
-	}
-
-	/// <summary>
-	/// Gets the preferred culture from the locale service or falls back to the default culture.
-	/// </summary>
-	private string GetPreferredCultureSafe()
-	{
-		if(_locale is null)
-		{
-			return DefaultCulture;
-		}
-		try
-		{
-			return _locale.GetPreferredCultureAsync().GetAwaiter().GetResult() ?? DefaultCulture;
-		}
-		catch
-		{
-			return DefaultCulture;
-		}
-	}
-
-	private static IEnumerable<LocalizedString> GetAllStringsInternal(bool includeParentCultures)
-	{
-		if(LocaleDictionary.Locales is null) yield break;
-		foreach(var kvp in LocaleDictionary.Locales)
-			yield return new LocalizedString(kvp.Key, kvp.Value, resourceNotFound: false);
 	}
 }

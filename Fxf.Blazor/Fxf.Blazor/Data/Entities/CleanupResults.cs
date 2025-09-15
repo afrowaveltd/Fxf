@@ -1,6 +1,4 @@
-﻿using System.Data.SqlTypes;
-
-namespace Fxf.Blazor.Data.Entities;
+﻿namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents the results of a cleanup operation, including timing, status, and statistics.
@@ -8,9 +6,9 @@ namespace Fxf.Blazor.Data.Entities;
 public class CleanupResults
 {
 	/// <summary>
-	/// Gets or sets the UTC start time of the cleanup operation.
+	/// Gets or sets a value indicating whether the old client language was successfully stored.
 	/// </summary>
-	public DateTime StartTime { get; set; } = DateTime.UtcNow;
+	public bool ClientOldLanguageStored { get; set; } = true;
 
 	/// <summary>
 	/// Gets or sets the UTC end time of the cleanup operation.
@@ -18,9 +16,9 @@ public class CleanupResults
 	public DateTime EndTime { get; set; } = DateTime.UtcNow;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the old client language was successfully stored.
+	/// Gets or sets the number of old translation results deleted during the cleanup.
 	/// </summary>
-	public bool ClientOldLanguageStored { get; set; } = true;
+	public int OldTranslationResultsDeleted { get; set; } = 0;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the old server language was successfully stored.
@@ -28,7 +26,7 @@ public class CleanupResults
 	public bool ServerOldLanguageStored { get; set; } = true;
 
 	/// <summary>
-	/// Gets or sets the number of old translation results deleted during the cleanup.
+	/// Gets or sets the UTC start time of the cleanup operation.
 	/// </summary>
-	public int OldTranslationResultsDeleted { get; set; } = 0;
+	public DateTime StartTime { get; set; } = DateTime.UtcNow;
 }

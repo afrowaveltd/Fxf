@@ -1,16 +1,10 @@
-﻿using Fxf.Blazor.Models.Settings;
-using Fxf.Blazor.Services;
-using Fxf.Blazor.Services.LibreTranslate;
-using Fxf.Shared.Models;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Localization;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 
 namespace Fxf.Blazor.Hubs;
 
 /// <summary>
-/// SignalR hub for real-time localization and language updates.
-/// Provides methods for clients to request and update locale data, language metadata, dictionaries, and translations.
+/// SignalR hub for real-time localization and language updates. Provides methods for clients to
+/// request and update locale data, language metadata, dictionaries, and translations.
 /// </summary>
 public class LocalizationHub(
 	 ILanguageService languageService,
@@ -77,7 +71,8 @@ public class LocalizationHub(
 	}
 
 	/// <summary>
-	/// Handles a request from the client to retrieve a translation dictionary for a specific language code and context.
+	/// Handles a request from the client to retrieve a translation dictionary for a specific
+	/// language code and context.
 	/// </summary>
 	/// <param name="code">The ISO language code.</param>
 	/// <param name="isClient">True to retrieve client (WebAssembly) dictionary; false for server.</param>
@@ -200,7 +195,8 @@ public class LocalizationHub(
 	}
 
 	/// <summary>
-	/// Handles a request from the client to retrieve the last stored translation dictionary for the given context.
+	/// Handles a request from the client to retrieve the last stored translation dictionary for the
+	/// given context.
 	/// </summary>
 	/// <param name="isClient">True to retrieve client (WebAssembly) data; false for server data.</param>
 	public async Task GetOldAsync(bool isClient = true)
@@ -213,7 +209,9 @@ public class LocalizationHub(
 	/// Handles a request from the client to save the last known translation dictionary for the given context.
 	/// </summary>
 	/// <param name="data">The dictionary of translations to save.</param>
-	/// <param name="isClient">True to save to client (WebAssembly) temp location; false for server temp location.</param>
+	/// <param name="isClient">
+	/// True to save to client (WebAssembly) temp location; false for server temp location.
+	/// </param>
 	public async Task SaveOldAsync(Dictionary<string, string> data, bool isClient = true)
 	{
 		var response = await _languageService.SaveOldTranslationAsync(data, isClient);
@@ -233,8 +231,10 @@ public class LocalizationHub(
 	/// <summary>
 	/// Detects the locale of the current HTTP request and notifies the caller with the detected locale.
 	/// </summary>
-	/// <remarks>This method retrieves the culture information from the current HTTP request and defaults to
-	/// "en"  if no culture is detected. The detected locale is then sent to the caller using the interface.</remarks>
+	/// <remarks>
+	/// This method retrieves the culture information from the current HTTP request and defaults to
+	/// "en" if no culture is detected. The detected locale is then sent to the caller using the interface.
+	/// </remarks>
 	/// <returns></returns>
 	public async Task DetectLocales()
 	{

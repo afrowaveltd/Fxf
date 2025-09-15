@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Fxf.Blazor.Data.Entities;
+﻿namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents the results of translation operations, including successful translations and errors.
@@ -13,12 +11,12 @@ public class TranslationResults
 	public string LanguageCode { get; set; } = string.Empty;
 
 	/// <summary>
-	/// Gets or sets the mark of success
-	/// </summary>
-	public bool Successful { get; set; }
-
-	/// <summary>
 	/// Phrase that was translated
 	/// </summary>
 	public string Phrase { get; set; } = string.Empty;
+
+	/// <summary>
+	/// Gets or sets the mark of success
+	/// </summary>
+	public bool Successful { get; set; }
 }

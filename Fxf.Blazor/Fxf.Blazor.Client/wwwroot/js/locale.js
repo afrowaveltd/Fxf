@@ -4,10 +4,10 @@
  * @returns {string[]} An array of locale strings, e.g., ["cs-CZ", "cs", "en-US", "en"].
  */
 export function getBrowserLocales() {
-	if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
-		return navigator.languages;
-	}
-	return [navigator.language || "en"];
+    if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+        return navigator.languages;
+    }
+    return [navigator.language || "en"];
 }
 
 /**
@@ -15,11 +15,11 @@ export function getBrowserLocales() {
  * @returns {string|null} The IANA time zone name, or null if unavailable.
  */
 export function getTimeZone() {
-	try {
-		return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
-	} catch {
-		return null;
-	}
+    try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -29,8 +29,8 @@ export function getTimeZone() {
  * @param {number} [days=365] - Number of days until the cookie expires.
  */
 function setCookie(name, value, days = 365) {
-	const expires = new Date(Date.now() + days * 864e5).toUTCString();
-	document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
 /**
@@ -39,8 +39,8 @@ function setCookie(name, value, days = 365) {
  * @returns {string|null} The cookie value, or null if not found.
  */
 function getCookie(name) {
-	const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
-	return match ? decodeURIComponent(match[1]) : null;
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
 }
 
 /**
@@ -48,7 +48,7 @@ function getCookie(name) {
  * @param {string} culture - The culture code to save (e.g., "en", "cs").
  */
 export function savePreferredCulture(culture) {
-	setCookie('BlazorCulture', culture);
+    setCookie('BlazorCulture', culture);
 }
 
 /**
@@ -56,15 +56,15 @@ export function savePreferredCulture(culture) {
  * @returns {string|null} The two-letter culture code, or "en" if not set.
  */
 export function getPreferredCulture() {
-	let culture = getCookie('BlazorCulture');
-	if (culture && culture.length > 2) {
-		culture = culture.substring(0, 2);
-	}
-	if (!culture) {
-		culture = "";
-	}
-	console.log(culture);
-	return culture;
+    let culture = getCookie('BlazorCulture');
+    if (culture && culture.length > 2) {
+        culture = culture.substring(0, 2);
+    }
+    if (!culture) {
+        culture = "";
+    }
+    console.log(culture);
+    return culture;
 }
 
 /**
@@ -73,8 +73,9 @@ export function getPreferredCulture() {
  * @returns {void}
  */
 export function setBlazorCultureCookie(culture) {
-	// jednoduchá cookie (ne HttpOnly), exspirace 1 rok
-	const d = new Date();
-	d.setFullYear(d.getFullYear() + 1);
-	document.cookie = `BlazorCulture=${encodeURIComponent(culture)}; path=/; expires=${d.toUTCString()}`;
+
+    // jednoduchá cookie (ne HttpOnly), exspirace 1 rok
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    document.cookie = `BlazorCulture=${encodeURIComponent(culture)}; path=/; expires=${d.toUTCString()}`;
 }

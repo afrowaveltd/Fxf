@@ -1,5 +1,4 @@
-﻿
-namespace Fxf.Blazor.SchedulledService;
+﻿namespace Fxf.Blazor.SchedulledService;
 
 public interface IUITranslationService
 {

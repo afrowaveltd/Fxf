@@ -88,6 +88,47 @@ namespace Fxf.Blazor.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Fxf.Blazor.Data.Entities.HubActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConnectionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Event")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hub")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RemoteIpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HubActivityLogs");
+                });
+
             modelBuilder.Entity("Fxf.Blazor.Data.Entities.SignalRConnection", b =>
                 {
                     b.Property<string>("Id")
@@ -118,7 +159,7 @@ namespace Fxf.Blazor.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SignalRConnections", (string)null);
+                    b.ToTable("SignalRConnections");
                 });
 
             modelBuilder.Entity("Fxf.Blazor.Data.Entities.WorkerResults", b =>
@@ -300,12 +341,21 @@ namespace Fxf.Blazor.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Fxf.Blazor.Data.Entities.HubActivityLog", b =>
+                {
+                    b.HasOne("Fxf.Blazor.Data.Entities.ApplicationUser", "User")
+                        .WithMany("HubActivities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Fxf.Blazor.Data.Entities.SignalRConnection", b =>
                 {
                     b.HasOne("Fxf.Blazor.Data.Entities.ApplicationUser", "User")
-                        .WithMany("Connections")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -818,7 +868,7 @@ namespace Fxf.Blazor.Migrations
 
             modelBuilder.Entity("Fxf.Blazor.Data.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Connections");
+                    b.Navigation("HubActivities");
                 });
 #pragma warning restore 612, 618
         }

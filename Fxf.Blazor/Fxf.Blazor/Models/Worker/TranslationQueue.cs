@@ -2,7 +2,6 @@
 
 public class TranslationQueue
 {
-	public string Language { get; set; } = string.Empty;
 	public bool IsFrontend { get; set; } = true;
-	public
+	public string Language { get; set; } = string.Empty;
 }

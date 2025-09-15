@@ -3,8 +3,10 @@
 /// <summary>
 /// Represents an error response containing details about an error that occurred during an operation.
 /// </summary>
-/// <remarks>This class is typically used to convey error information, such as a descriptive message,  in response
-/// to a failed operation or API call.</remarks>
+/// <remarks>
+/// This class is typically used to convey error information, such as a descriptive message, in
+/// response to a failed operation or API call.
+/// </remarks>
 public class ErrorResponse(string? message)
 {
 	/// <summary>

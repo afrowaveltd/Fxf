@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Fxf.Blazor.Data.Entities;
+﻿namespace Fxf.Blazor.Data.Entities;
 
 /// <summary>
 /// Represents statistics and errors related to language translations during a worker process.
@@ -8,14 +6,9 @@ namespace Fxf.Blazor.Data.Entities;
 public class LanguagesTranslations
 {
 	/// <summary>
-	/// Gets or sets the number of translations needed.
+	/// Gets or sets the UTC end time for the translation process.
 	/// </summary>
-	public int TranslationsNeeded { get; set; } = 0;
-
-	/// <summary>
-	/// Gets or sets the number of translations completed.
-	/// </summary>
-	public int TranslationsDone { get; set; } = 0;
+	public DateTime EndTime { get; set; } = DateTime.UtcNow;
 
 	/// <summary>
 	/// Gets or sets the collection of translation errors encountered during processing.
@@ -28,7 +21,12 @@ public class LanguagesTranslations
 	public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
 	/// <summary>
-	/// Gets or sets the UTC end time for the translation process.
+	/// Gets or sets the number of translations completed.
 	/// </summary>
-	public DateTime EndTime { get; set; } = DateTime.UtcNow;
+	public int TranslationsDone { get; set; } = 0;
+
+	/// <summary>
+	/// Gets or sets the number of translations needed.
+	/// </summary>
+	public int TranslationsNeeded { get; set; } = 0;
 }

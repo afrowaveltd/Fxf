@@ -32,6 +32,7 @@
 			// make it clear we only want one instance per element
 			// can be removed later when multiple key/instances are fine to be used
 			if (!instanceMap.has(key) && instanceMap.size !== 0) {
+
 				// eslint-disable-next-line no-console
 				console.error(`Bootstrap doesn't allow more than one instance per element. Bound instance: ${Array.from(instanceMap.keys())[0]}.`);
 				return;
@@ -76,6 +77,7 @@
 	 */
 	const parseSelector = selector => {
 		if (selector && window.CSS && window.CSS.escape) {
+
 			// document.querySelector needs escaping to handle IDs (html5+) containing for instance /
 			selector = selector.replace(/#([^\s"#']+)/g, (match, id) => `#${CSS.escape(id)}`);
 		}
@@ -136,6 +138,7 @@
 		return typeof object.nodeType !== 'undefined';
 	};
 	const getElement = object => {
+
 		// it's a jQuery object or a node element
 		if (isElement$1(object)) {
 			return object.jquery ? object[0] : object;
@@ -150,6 +153,7 @@
 			return false;
 		}
 		const elementIsVisible = getComputedStyle(element).getPropertyValue('visibility') === 'visible';
+
 		// Handle `details` element as its content may falsie appear visible when it is closed
 		const closedDetails = element.closest('details:not([open])');
 		if (!closedDetails) {
@@ -220,6 +224,7 @@
 	const DOMContentLoadedCallbacks = [];
 	const onDOMContentLoaded = callback => {
 		if (document.readyState === 'loading') {
+
 			// add listener on the first call when the document is in loading state
 			if (!DOMContentLoadedCallbacks.length) {
 				document.addEventListener('DOMContentLoaded', () => {
@@ -376,6 +381,7 @@
 	}
 	function normalizeParameters(originalTypeEvent, handler, delegationFunction) {
 		const isDelegated = typeof handler === 'string';
+
 		// TODO: tooltip passes `false` instead of selector, so we need to check
 		const callable = isDelegated ? delegationFunction : handler || delegationFunction;
 		let typeEvent = getTypeEvent(originalTypeEvent);
@@ -435,6 +441,7 @@
 		}
 	}
 	function getTypeEvent(event) {
+
 		// allow to get the native events from namespaced events ('click.bs.button' --> 'click')
 		event = event.replace(stripNameRegex, '');
 		return customEvents[event] || event;
@@ -456,6 +463,7 @@
 			const storeElementEvent = events[typeEvent] || {};
 			const isNamespace = originalTypeEvent.startsWith('.');
 			if (typeof callable !== 'undefined') {
+
 				// Simplest case: handler is passed, remove that listener ONLY.
 				if (!Object.keys(storeElementEvent).length) {
 					return;
@@ -594,6 +602,7 @@
 	 */
 
 	class Config {
+
 		// Getters
 		static get Default() {
 			return {};
@@ -759,6 +768,7 @@
 			}
 			return [];
 		},
+
 		// TODO: this is now unused; remove later along with prev()
 		next(element, selector) {
 			let next = element.nextElementSibling;
@@ -840,6 +850,7 @@
 	 */
 
 	class Alert extends BaseComponent {
+
 		// Getters
 		static get NAME() {
 			return NAME$f;
@@ -914,6 +925,7 @@
 	 */
 
 	class Button extends BaseComponent {
+
 		// Getters
 		static get NAME() {
 			return NAME$e;
@@ -921,6 +933,7 @@
 
 		// Public
 		toggle() {
+
 			// Toggle class and sync the `aria-pressed` attribute with the return value of the `.toggle()` method
 			this._element.setAttribute('aria-pressed', this._element.classList.toggle(CLASS_NAME_ACTIVE$3));
 		}
@@ -1131,6 +1144,7 @@
 	};
 	const DefaultType$b = {
 		interval: '(number|boolean)',
+
 		// TODO:v6 remove boolean support
 		keyboard: 'boolean',
 		pause: '(string|boolean)',
@@ -1174,6 +1188,7 @@
 			this._slide(ORDER_NEXT);
 		}
 		nextWhenVisible() {
+
 			// FIXME TODO use `document.visibilityState`
 			// Don't call next when the page isn't visible
 			// or the carousel or its parent isn't visible
@@ -1333,6 +1348,7 @@
 				return;
 			}
 			if (!activeElement || !nextElement) {
+
 				// Some weirdness is happening, so we bail
 				// TODO: change tests that use empty divs to avoid this check
 				return;
@@ -1624,6 +1640,7 @@
 		}
 		_getFirstLevelChildren(selector) {
 			const children = SelectorEngine.find(CLASS_NAME_DEEPER_CHILDREN, this._config.parent);
+
 			// remove children if greater depth
 			return SelectorEngine.find(selector, this._config.parent).filter(element => !children.includes(element));
 		}
@@ -1660,6 +1677,7 @@
 	 */
 
 	EventHandler.on(document, EVENT_CLICK_DATA_API$4, SELECTOR_DATA_TOGGLE$4, function (event) {
+
 		// preventDefault only for <a> elements (which change the URL) not inside the collapsible element
 		if (event.target.tagName === 'A' || event.delegateTarget && event.delegateTarget.tagName === 'A') {
 			event.preventDefault();
@@ -1737,6 +1755,7 @@
 	}
 
 	function isShadowRoot(node) {
+
 		// IE 11 has no ShadowRoot
 		if (typeof ShadowRoot === 'undefined') {
 			return false;
@@ -1758,6 +1777,7 @@
 			if (!isHTMLElement(element) || !getNodeName(element)) {
 				return;
 			} // Flow doesn't support to extend this property, but it's the most
+
 			// effective way to apply styles to an HTMLElement
 			// $FlowFixMe[cannot-write]
 
@@ -1893,6 +1913,7 @@
 
 	function getLayoutRect(element) {
 		var clientRect = getBoundingClientRect(element); // Use the clientRect sizes if it's not been transformed.
+
 		// Fixes https://github.com/popperjs/popper-core/issues/1223
 
 		var width = element.offsetWidth;
@@ -1944,6 +1965,7 @@
 	}
 
 	function getDocumentElement(element) {
+
 		// $FlowFixMe[incompatible-return]: assume body is always available
 		return ((isElement(element) ? element.ownerDocument : // $FlowFixMe[prop-missing]
 			element.document) || window.document).documentElement;
@@ -1955,11 +1977,13 @@
 		}
 
 		return (// this is a quicker (but less type safe) way to save quite some bytes from the bundle
+
 			// $FlowFixMe[incompatible-return]
 			// $FlowFixMe[prop-missing]
 			element.assignedSlot || // step into the shadow DOM of the parent of a slotted node
 			element.parentNode || ( // DOM Element detected
 				isShadowRoot(element) ? element.host : null) || // ShadowRoot detected
+
 			// $FlowFixMe[incompatible-call]: HTMLElement is a Node
 			getDocumentElement(element) // fallback
 
@@ -1974,6 +1998,7 @@
 
 		return element.offsetParent;
 	} // `.offsetParent` reports `null` for fixed elements, while absolute elements
+
 	// return the containing block
 
 	function getContainingBlock(element) {
@@ -1981,6 +2006,7 @@
 		var isIE = /Trident/i.test(getUAString());
 
 		if (isIE && isHTMLElement(element)) {
+
 			// In IE 9, 10 and 11 fixed elements containing block is always established by the viewport
 			var elementCss = getComputedStyle$1(element);
 
@@ -1997,6 +2023,7 @@
 
 		while (isHTMLElement(currentNode) && ['html', 'body'].indexOf(getNodeName(currentNode)) < 0) {
 			var css = getComputedStyle$1(currentNode); // This is non-exhaustive but covers the most common CSS properties that
+
 			// create a containing block.
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
 
@@ -2009,6 +2036,7 @@
 
 		return null;
 	} // Gets the closest ancestor positioned element. Handles some edge cases,
+
 	// such as table ancestors and cross browser bugs.
 
 	function getOffsetParent(element) {
@@ -2091,6 +2119,7 @@
 		var arrowOffsetParent = getOffsetParent(arrowElement);
 		var clientSize = arrowOffsetParent ? axis === 'y' ? arrowOffsetParent.clientHeight || 0 : arrowOffsetParent.clientWidth || 0 : 0;
 		var centerToReference = endDiff / 2 - startDiff / 2; // Make sure the arrow doesn't overflow the popper if the center point is
+
 		// outside of the popper bounds
 
 		var min = paddingObject[minProp];
@@ -2147,6 +2176,7 @@
 		bottom: 'auto',
 		left: 'auto'
 	}; // Round the offsets to the nearest suitable subpixel based on the DPR.
+
 	// Zooming can change the DPR, but it seems to report a value that will
 	// cleanly divide the values into the appropriate subpixels.
 
@@ -2380,6 +2410,7 @@
 	}
 
 	function getWindowScrollBarX(element) {
+
 		// If <html> has a CSS width greater than the viewport, then this will be
 		// incorrect for RTL.
 		// Popper 1 is broken in this case and never had a bug report so let's assume
@@ -2444,6 +2475,7 @@
 	}
 
 	function isScrollParent(element) {
+
 		// Firefox wants us to check `-x` and `-y` variations as well
 		var _getComputedStyle = getComputedStyle$1(element),
 			overflow = _getComputedStyle.overflow,
@@ -2455,6 +2487,7 @@
 
 	function getScrollParent(node) {
 		if (['html', 'body', '#document'].indexOf(getNodeName(node)) >= 0) {
+
 			// $FlowFixMe[incompatible-return]: assume body is always available
 			return node.ownerDocument.body;
 		}
@@ -2514,6 +2547,7 @@
 	function getClientRectFromMixedType(element, clippingParent, strategy) {
 		return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
 	} // A "clipping parent" is an overflowable container with the characteristic of
+
 	// clipping (or hiding) overflowing elements with a position different from
 	// `initial`
 
@@ -2530,6 +2564,7 @@
 			return isElement(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== 'body';
 		});
 	} // Gets the maximum area that the element is visible in due to any number of
+
 	// clipping parents
 
 	function getClippingRect(element, boundary, rootBoundary, strategy) {
@@ -2650,6 +2685,7 @@
 		});
 		var popperClientRect = rectToClientRect(Object.assign({}, popperRect, popperOffsets));
 		var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect; // positive = overflowing the clipping rect
+
 		// 0 or negative = within the clipping rect
 
 		var overflowOffsets = {
@@ -2805,6 +2841,7 @@
 		}
 
 		if (makeFallbackChecks) {
+
 			// `2` may be desired in some cases – research later
 			var numberOfChecks = flipVariations ? 3 : 1;
 
@@ -2962,6 +2999,7 @@
 	function popperOffsets(_ref) {
 		var state = _ref.state,
 			name = _ref.name;
+
 		// Offsets are the actual position the popper needs to have to be
 		// properly positioned near its reference element
 		// This is the most basic placement, and will be adjusted by
@@ -3048,6 +3086,7 @@
 			var additive = tether ? -popperRect[len] / 2 : 0;
 			var minLen = variation === start ? referenceRect[len] : popperRect[len];
 			var maxLen = variation === start ? -popperRect[len] : -referenceRect[len]; // We need to include the arrow in the calculation so the arrow doesn't go
+
 			// outside the reference bounds
 
 			var arrowElement = state.elements.arrow;
@@ -3058,6 +3097,7 @@
 			var arrowPaddingObject = state.modifiersData['arrow#persistent'] ? state.modifiersData['arrow#persistent'].padding : getFreshSideObject();
 			var arrowPaddingMin = arrowPaddingObject[mainSide];
 			var arrowPaddingMax = arrowPaddingObject[altSide]; // If the reference length is smaller than the arrow length, we don't want
+
 			// to include its full size in the calculation. If the reference is small
 			// and near the edge of a boundary, the popper can overflow even if the
 			// reference is not overflowing as well (e.g. virtual elements with no
@@ -3137,6 +3177,7 @@
 		var scaleY = round(rect.height) / element.offsetHeight || 1;
 		return scaleX !== 1 || scaleY !== 1;
 	} // Returns the composite rect of an element relative to its offsetParent.
+
 	// Composite means it takes into account transforms as well as layout.
 
 	function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
@@ -3205,6 +3246,7 @@
 
 		modifiers.forEach(function (modifier) {
 			if (!visited.has(modifier.name)) {
+
 				// check for visited object
 				sort(modifier);
 			}
@@ -3213,6 +3255,7 @@
 	}
 
 	function orderModifiers(modifiers) {
+
 		// order based on dependencies
 		var orderedModifiers = order(modifiers); // order based on phase
 
@@ -3309,6 +3352,7 @@
 						reference: isElement(reference) ? listScrollParents(reference) : reference.contextElement ? listScrollParents(reference.contextElement) : [],
 						popper: listScrollParents(popper)
 					}; // Orders the modifiers based on their dependencies and `phase`
+
 					// properties
 
 					var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
@@ -3319,6 +3363,7 @@
 					runModifierEffects();
 					return instance.update();
 				},
+
 				// Sync update – it will always be executed, even if not necessary. This
 				// is useful for low frequency updates where sync behavior simplifies the
 				// logic.
@@ -3332,6 +3377,7 @@
 					var _state$elements = state.elements,
 						reference = _state$elements.reference,
 						popper = _state$elements.popper; // Don't proceed if `reference` or `popper` are not valid elements
+
 					// anymore
 
 					if (!areValidElements(reference, popper)) {
@@ -3342,6 +3388,7 @@
 						reference: getCompositeRect(reference, getOffsetParent(popper), state.options.strategy === 'fixed'),
 						popper: getLayoutRect(popper)
 					}; // Modifiers have the ability to reset the current update cycle. The
+
 					// most common use case for this is the `flip` modifier changing the
 					// placement, which then needs to re-run all the modifiers, because the
 					// logic was previously ran for the previous placement and is therefore
@@ -3349,6 +3396,7 @@
 
 					state.reset = false;
 					state.placement = state.options.placement; // On each update cycle, the `modifiersData` property for each modifier
+
 					// is filled with the initial data specified by the modifier. This means
 					// it doesn't persist and is fresh on each update.
 					// To ensure persistent data, use `${name}#persistent`
@@ -3380,6 +3428,7 @@
 						}
 					}
 				},
+
 				// Async and optimistically optimized update – it will not be executed if
 				// not necessary (debounced to run at most once-per-tick)
 				update: debounce(function () {
@@ -3403,6 +3452,7 @@
 					options.onFirstUpdate(state);
 				}
 			}); // Modifiers have the ability to execute arbitrary code before the first
+
 			// update cycle runs. They will be executed in the same order as the update
 			// cycle. This is useful when a modifier adds some persistent data that
 			// other modifiers need to use, but the modifier is run after the dependent
@@ -3568,6 +3618,7 @@
 			super(element, config);
 			this._popper = null;
 			this._parent = this._element.parentNode; // dropdown wrapper
+
 			// TODO: v6 revert #37011 & change markup https://getbootstrap.com/docs/5.3/forms/input-group/
 			this._menu = SelectorEngine.next(this._element, SELECTOR_MENU)[0] || SelectorEngine.prev(this._element, SELECTOR_MENU)[0] || SelectorEngine.findOne(SELECTOR_MENU, this._parent);
 			this._inNavbar = this._detectNavbar();
@@ -3664,6 +3715,7 @@
 		_getConfig(config) {
 			config = super._getConfig(config);
 			if (typeof config.reference === 'object' && !isElement$1(config.reference) && typeof config.reference.getBoundingClientRect !== 'function') {
+
 				// Popper virtual elements require a getBoundingClientRect method
 				throw new TypeError(`${NAME$a.toUpperCase()}: Option "reference" provided type "object" without a required "getBoundingClientRect" method.`);
 			}
@@ -3810,6 +3862,7 @@
 			}
 		}
 		static dataApiKeydownHandler(event) {
+
 			// If not an UP | DOWN | ESCAPE key => not a dropdown command
 			// If input/textarea && if key is other than ESCAPE => not a dropdown command
 
@@ -3834,6 +3887,7 @@
 				return;
 			}
 			if (instance._isShown()) {
+
 				// else is escape and we check if it is shown
 				event.stopPropagation();
 				instance.hide();
@@ -3881,6 +3935,7 @@
 		clickCallback: null,
 		isAnimated: false,
 		isVisible: true,
+
 		// if false, we use the backdrop helper without adding any element to the dom
 		rootElement: 'body' // give the choice to place backdrop under different elements
 	};
@@ -3964,6 +4019,7 @@
 			return this._element;
 		}
 		_configAfterMerge(config) {
+
 			// use getElement() with the default "body" to get a fresh Element on each instantiation
 			config.rootElement = getElement(config.rootElement);
 			return config;
@@ -4108,6 +4164,7 @@
 
 		// Public
 		getWidth() {
+
 			// https://developer.mozilla.org/en-US/docs/Web/API/Window/innerWidth#usage_notes
 			const documentWidth = document.documentElement.clientWidth;
 			return Math.abs(window.innerWidth - documentWidth);
@@ -4115,8 +4172,10 @@
 		hide() {
 			const width = this.getWidth();
 			this._disableOverFlow();
+
 			// give padding to element to balance the hidden scrollbar width
 			this._setElementAttributes(this._element, PROPERTY_PADDING, calculatedValue => calculatedValue + width);
+
 			// trick: We adjust positive paddingRight and negative marginRight to sticky-top elements to keep showing fullwidth
 			this._setElementAttributes(SELECTOR_FIXED_CONTENT, PROPERTY_PADDING, calculatedValue => calculatedValue + width);
 			this._setElementAttributes(SELECTOR_STICKY_CONTENT, PROPERTY_MARGIN, calculatedValue => calculatedValue - width);
@@ -4157,6 +4216,7 @@
 		_resetElementAttributes(selector, styleProperty) {
 			const manipulationCallBack = element => {
 				const value = Manipulator.getDataAttribute(element, styleProperty);
+
 				// We only want to remove the property if the value is `null`; the value can also be zero
 				if (value === null) {
 					element.style.removeProperty(styleProperty);
@@ -4300,6 +4360,7 @@
 		_initializeBackDrop() {
 			return new Backdrop({
 				isVisible: Boolean(this._config.backdrop),
+
 				// 'static' option will be translated to true, and booleans will keep their value,
 				isAnimated: this._isAnimated()
 			});
@@ -4310,6 +4371,7 @@
 			});
 		}
 		_showElement(relatedTarget) {
+
 			// try to append dynamic modal
 			if (!document.body.contains(this._element)) {
 				document.body.append(this._element);
@@ -4353,6 +4415,7 @@
 				}
 			});
 			EventHandler.on(this._element, EVENT_MOUSEDOWN_DISMISS, event => {
+
 				// a bad trick to segregate clicks that may start inside dialog but end outside, and avoid listen to scrollbar clicks
 				EventHandler.one(this._element, EVENT_CLICK_DISMISS, event2 => {
 					if (this._element !== event.target || this._element !== event2.target) {
@@ -4391,6 +4454,7 @@
 			}
 			const isModalOverflowing = this._element.scrollHeight > document.documentElement.clientHeight;
 			const initialOverflowY = this._element.style.overflowY;
+
 			// return if the following background transition hasn't yet completed
 			if (initialOverflowY === 'hidden' || this._element.classList.contains(CLASS_NAME_STATIC)) {
 				return;
@@ -4456,6 +4520,7 @@
 		}
 		EventHandler.one(target, EVENT_SHOW$4, showEvent => {
 			if (showEvent.defaultPrevented) {
+
 				// only register focus restorer if modal will actually get shown
 				return;
 			}
@@ -4678,6 +4743,7 @@
 			return;
 		}
 		EventHandler.one(target, EVENT_HIDDEN$3, () => {
+
 			// focus on trigger when it is closed
 			if (isVisible(this)) {
 				this.focus();
@@ -4722,6 +4788,7 @@
 	// js-docs-start allow-list
 	const ARIA_ATTRIBUTE_PATTERN = /^aria-[\w-]*$/i;
 	const DefaultAllowlist = {
+
 		// Global attributes allowed on any supplied element below.
 		'*': ['class', 'dir', 'id', 'lang', 'role', ARIA_ATTRIBUTE_PATTERN],
 		a: ['target', 'href', 'title', 'rel'],
@@ -4757,6 +4824,7 @@
 		u: [],
 		ul: []
 	};
+
 	// js-docs-end allow-list
 
 	const uriAttributes = new Set(['background', 'cite', 'href', 'itemtype', 'longdesc', 'poster', 'src', 'xlink:href']);
@@ -4767,6 +4835,7 @@
 	 *
 	 * Shout-out to Angular https://github.com/angular/angular/blob/15.2.8/packages/core/src/sanitization/url_sanitizer.ts#L38
 	 */
+
 	// eslint-disable-next-line unicorn/better-regex
 	const SAFE_URL_PATTERN = /^(?!javascript:)(?:[a-z0-9+.-]+:|[^&:/?#]*(?:[/?#]|$))/i;
 	const allowedAttribute = (attribute, allowedAttributeList) => {
@@ -4823,6 +4892,7 @@
 	const Default$4 = {
 		allowList: DefaultAllowlist,
 		content: {},
+
 		// { selector : text ,  selector2 : text2 , }
 		extraClass: '',
 		html: false,
@@ -5196,6 +5266,7 @@
 				return null;
 			}
 			tip.classList.remove(CLASS_NAME_FADE$2, CLASS_NAME_SHOW$2);
+
 			// TODO: v6 the following can be achieved with CSS only
 			tip.classList.add(`bs-${this.constructor.NAME}-auto`);
 			const tipId = getUID(this.constructor.NAME).toString();
@@ -5218,6 +5289,7 @@
 			} else {
 				this._templateFactory = new TemplateFactory({
 					...this._config,
+
 					// the `content` var has to be after `this._config`
 					// to override config.content in case of popover
 					content,
@@ -5293,6 +5365,7 @@
 					enabled: true,
 					phase: 'beforeMain',
 					fn: data => {
+
 						// Pre-set Popper's placement attribute in order to read the arrow sizes properly.
 						// Otherwise, Popper mixes up the width and height dimensions since the initial arrow style is for top placement
 						this._getTipElement().setAttribute('data-popper-placement', data.state.placement);
@@ -5486,6 +5559,7 @@
 	 */
 
 	class Popover extends Tooltip {
+
 		// Getters
 		static get Default() {
 			return Default$2;
@@ -5565,6 +5639,7 @@
 	const SELECTOR_DROPDOWN_TOGGLE$1 = '.dropdown-toggle';
 	const Default$1 = {
 		offset: null,
+
 		// TODO: v6 @deprecated, keep it for backwards compatibility reasons
 		rootMargin: '0px 0px -25%',
 		smoothScroll: false,
@@ -5573,6 +5648,7 @@
 	};
 	const DefaultType$1 = {
 		offset: '(number|null)',
+
 		// TODO v6 @deprecated, keep it for backwards compatibility reasons
 		rootMargin: 'string',
 		smoothScroll: 'boolean',
@@ -5632,6 +5708,7 @@
 
 		// Private
 		_configAfterMerge(config) {
+
 			// TODO: on v6 target should be given explicitly & remove the {target: 'ss-target'} case
 			config.target = getElement(config.target) || document.body;
 
@@ -5694,9 +5771,11 @@
 					continue;
 				}
 				const entryIsLowerThanPrevious = entry.target.offsetTop >= this._previousScrollData.visibleEntryTop;
+
 				// if we are scrolling down, pick the bigger offsetTop
 				if (userScrollsDown && entryIsLowerThanPrevious) {
 					activate(entry);
+
 					// if parent isn't scrolled, let's keep the first visible item, breaking the iteration
 					if (!parentScrollTop) {
 						return;
@@ -5715,6 +5794,7 @@
 			this._observableSections = new Map();
 			const targetLinks = SelectorEngine.find(SELECTOR_TARGET_LINKS, this._config.target);
 			for (const anchor of targetLinks) {
+
 				// ensure that the anchor has an id and is not disabled
 				if (!anchor.hash || isDisabled(anchor)) {
 					continue;
@@ -5741,12 +5821,14 @@
 			});
 		}
 		_activateParents(target) {
+
 			// Activate dropdown parents
 			if (target.classList.contains(CLASS_NAME_DROPDOWN_ITEM)) {
 				SelectorEngine.findOne(SELECTOR_DROPDOWN_TOGGLE$1, target.closest(SELECTOR_DROPDOWN)).classList.add(CLASS_NAME_ACTIVE$1);
 				return;
 			}
 			for (const listGroup of SelectorEngine.parents(target, SELECTOR_NAV_LIST_GROUP)) {
+
 				// Set triggered links parents as active
 				// With both <ul> and <nav> markup a parent is the previous sibling of any nav ancestor
 				for (const item of SelectorEngine.prev(listGroup, SELECTOR_LINK_ITEMS)) {
@@ -5844,6 +5926,7 @@
 			this._parent = this._element.closest(SELECTOR_TAB_PANEL);
 			if (!this._parent) {
 				return;
+
 				// TODO: should throw exception in v6
 				// throw new TypeError(`${element.outerHTML} has not a valid parent ${SELECTOR_INNER_ELEM}`)
 			}
@@ -5860,6 +5943,7 @@
 
 		// Public
 		show() {
+
 			// Shows this elem and deactivate the active sibling if exists
 			const innerElem = this._element;
 			if (this._elemIsActive(innerElem)) {
@@ -5947,6 +6031,7 @@
 			}
 		}
 		_getChildren() {
+
 			// collection of inner elements
 			return SelectorEngine.find(SELECTOR_INNER_ELEM, this._parent);
 		}
@@ -6269,4 +6354,5 @@
 
 	return index_umd;
 }));
+
 //# sourceMappingURL=bootstrap.bundle.js.map

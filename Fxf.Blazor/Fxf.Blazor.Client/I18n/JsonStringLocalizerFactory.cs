@@ -4,10 +4,11 @@ using Microsoft.Extensions.Localization;
 namespace Fxf.Blazor.Client.I18n;
 
 /// <summary>
-/// Factory for creating <see cref="JsonStringLocalizer"/> instances used for client-side Blazor localization.
-/// Resolves dependencies via DI (<see cref="IApiClientService"/> and <see cref="ILocaleService"/>) and supplies them
-/// to each created localizer. This implementation does not differentiate resources by type/name; it returns a
-/// culture-aware JSON-backed localizer for every request.
+/// Factory for creating <see cref="JsonStringLocalizer"/> instances used for client-side Blazor
+/// localization. Resolves dependencies via DI ( <see cref="IApiClientService"/> and <see
+/// cref="ILocaleService"/>) and supplies them to each created localizer. This implementation does
+/// not differentiate resources by type/name; it returns a culture-aware JSON-backed localizer for
+/// every request.
 /// </summary>
 public sealed class JsonStringLocalizerFactory(IApiClientService api, ILocaleService locale) : IStringLocalizerFactory
 {

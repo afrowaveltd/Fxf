@@ -1,11 +1,9 @@
-﻿using System.Text.Json;
-
-namespace Fxf.Blazor.Services;
+﻿namespace Fxf.Blazor.Services;
 
 /// <summary>
 /// Defines a lightweight HTTP helper abstraction used by translation and localization features.
-/// Exposes convenience methods for common HTTP scenarios (GET, JSON POST, form POST, multipart POST),
-/// plus helpers for sending requests and reading JSON payloads.
+/// Exposes convenience methods for common HTTP scenarios (GET, JSON POST, form POST, multipart
+/// POST), plus helpers for sending requests and reading JSON payloads.
 /// </summary>
 public interface IHttpService
 {
@@ -24,12 +22,16 @@ public interface IHttpService
 	HttpClient GetLibreHttpClient();
 
 	/// <summary>
-	/// Sends a POST request with <see cref="FormUrlEncodedContent"/> to the specified URL with optional headers.
+	/// Sends a POST request with <see cref="FormUrlEncodedContent"/> to the specified URL with
+	/// optional headers.
 	/// </summary>
 	/// <param name="url">The request URL (relative or absolute).</param>
 	/// <param name="formFields">The form fields to send.</param>
 	/// <param name="headers">Optional headers to include in the request.</param>
-	/// <returns>The <see cref="HttpResponseMessage"/> returned by the server; in case of an exception, a default message instance.</returns>
+	/// <returns>
+	/// The <see cref="HttpResponseMessage"/> returned by the server; in case of an exception, a
+	/// default message instance.
+	/// </returns>
 	Task<HttpResponseMessage> PostFormAsync(string url, Dictionary<string, string> formFields, Dictionary<string, string>? headers = null);
 
 	/// <summary>
@@ -57,7 +59,9 @@ public interface IHttpService
 	/// </summary>
 	/// <typeparam name="T">The target type to deserialize into.</typeparam>
 	/// <param name="content">The HTTP content to read.</param>
-	/// <param name="options">Optional <see cref="JsonSerializerOptions"/>; when null, uses <see cref="JsonSerializerDefaults.Web"/>.</param>
+	/// <param name="options">
+	/// Optional <see cref="JsonSerializerOptions"/>; when null, uses <see cref="JsonSerializerDefaults.Web"/>.
+	/// </param>
 	/// <returns>The deserialized value, or <see langword="null"/> if the payload is empty.</returns>
 	Task<T?> ReadJsonAsync<T>(HttpContent content, JsonSerializerOptions? options = null);
 

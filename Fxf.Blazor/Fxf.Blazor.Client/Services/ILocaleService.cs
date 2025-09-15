@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 public interface ILocaleService
 {
+	Task ApplyCultureAsync(string culture, bool persist = true);
+
 	Task<string[]> GetBrowserLocalesAsync();
 
 	Task<string?> GetPreferredCultureAsync();
 
-	Task SavePreferredCultureAsync(string culture);
-
 	Task<string?> GetTimeZoneAsync();
 
-	Task ApplyCultureAsync(string culture, bool persist = true);
+	Task SavePreferredCultureAsync(string culture);
 }

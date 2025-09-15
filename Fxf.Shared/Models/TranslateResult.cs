@@ -3,8 +3,10 @@
 /// <summary>
 /// Represents the result of a translation operation performed by the LibreTranslation service.
 /// </summary>
-/// <remarks>This class encapsulates the translated text returned by the service.  It is typically used to store
-/// and access the output of a translation request.</remarks>
+/// <remarks>
+/// This class encapsulates the translated text returned by the service. It is typically used to
+/// store and access the output of a translation request.
+/// </remarks>
 public class TranslateResult
 {
 	/// <summary>

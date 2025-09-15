@@ -1,13 +1,14 @@
-﻿using Fxf.Blazor.Services;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Fxf.Blazor.Middlewares;
 
 /// <summary>
-/// Middleware for setting the current request's culture based on cookies, query parameters, or Accept-Language headers.
+/// Middleware for setting the current request's culture based on cookies, query parameters, or
+/// Accept-Language headers.
 /// </summary>
 /// <remarks>
-/// This middleware checks for a culture value in the following order: cookie, query string, Accept-Language header. If none are found, it defaults to "en".
+/// This middleware checks for a culture value in the following order: cookie, query string,
+/// Accept-Language header. If none are found, it defaults to "en".
 /// </remarks>
 public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 {
@@ -35,7 +36,8 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 			Thread.CurrentThread.CurrentUICulture = uiCulture;
 			context.Request.Headers.AcceptLanguage = cultureQuery;
 			_cookieService.SetCookie("BlazorCulture", cultureQuery, 30 * 24 * 60); // 30 days
-																										  // Check which locales are supported
+
+			// Check which locales are supported
 		}
 		else
 		{
@@ -44,6 +46,16 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 			context.Request.Headers.AcceptLanguage = "en";
 		}
 		await next(context);
+	}
+
+	/// <summary>
+	/// Determines whether the specified culture name is valid.
+	/// </summary>
+	/// <param name="name">The culture name to validate.</param>
+	/// <returns><c>true</c> if the culture is valid; otherwise, <c>false</c>.</returns>
+	private static bool IsValidCulture(string? name)
+	{
+		return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(culture => string.Equals(culture.Name, name, StringComparison.CurrentCultureIgnoreCase));
 	}
 
 	/// <summary>
@@ -69,15 +81,5 @@ public class LocalizationMiddleware(ICookieService cookieService) : IMiddleware
 			return culture;
 		}
 		return "en";
-	}
-
-	/// <summary>
-	/// Determines whether the specified culture name is valid.
-	/// </summary>
-	/// <param name="name">The culture name to validate.</param>
-	/// <returns><c>true</c> if the culture is valid; otherwise, <c>false</c>.</returns>
-	private static bool IsValidCulture(string? name)
-	{
-		return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(culture => string.Equals(culture.Name, name, StringComparison.CurrentCultureIgnoreCase));
 	}
 }

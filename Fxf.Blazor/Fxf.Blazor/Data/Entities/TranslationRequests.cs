@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using static Fxf.Blazor.Models.Enums;
+﻿using static Fxf.Blazor.Models.Enums;
 
 namespace Fxf.Blazor.Data.Entities;
 
@@ -9,6 +8,11 @@ namespace Fxf.Blazor.Data.Entities;
 public class TranslationRequests
 {
 	/// <summary>
+	/// Gets or sets the number of translation requests to remove.
+	/// </summary>
+	public PhraseChange ChangeType { get; set; } = PhraseChange.Add;
+
+	/// <summary>
 	/// Gets or sets the language code for which the translation requests are tracked.
 	/// </summary>
 	public string LanguageCode { get; set; } = string.Empty;
@@ -17,9 +21,4 @@ public class TranslationRequests
 	/// Gets or sets the number of translation requests to add.
 	/// </summary>
 	public string Phrase { get; set; } = string.Empty;
-
-	/// <summary>
-	/// Gets or sets the number of translation requests to remove.
-	/// </summary>
-	public PhraseChange ChangeType { get; set; } = PhraseChange.Add;
 }

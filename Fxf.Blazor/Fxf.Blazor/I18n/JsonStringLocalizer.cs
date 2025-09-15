@@ -1,15 +1,11 @@
-﻿using Fxf.Blazor.Services.LibreTranslate;
-using Fxf.Shared.Models;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Globalization;
-using System.Text.Json;
 
 namespace Fxf.Blazor.I18n;
 
 /// <summary>
-/// Provides localization using JSON files for Blazor applications.
-/// Implements <see cref="IStringLocalizer"/> and supports distributed caching.
+/// Provides localization using JSON files for Blazor applications. Implements <see
+/// cref="IStringLocalizer"/> and supports distributed caching.
 /// </summary>
 public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService translationService) : IStringLocalizer
 {
@@ -59,9 +55,7 @@ public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService
 	/// Returns all localized strings for the current culture.
 	/// </summary>
 	/// <param name="includeParentCultures">Indicates whether to include parent cultures.</param>
-	/// <returns>
-	/// An <see cref="IEnumerable{LocalizedString}"/> of all localized strings.
-	/// </returns>
+	/// <returns>An <see cref="IEnumerable{LocalizedString}"/> of all localized strings.</returns>
 	public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
 	{
 		string filePath = Path.Combine(LocalesPath, Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToLower() + ".json");
@@ -85,6 +79,32 @@ public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService
 			// Logger.LogError("Error while reading the dictionary {error}", ex);
 			return [];
 		}
+	}
+
+	private static string? GetValueFromJson(string key, string filePath)
+	{
+		if(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+		{
+			return default;
+		}
+
+		try
+		{
+			string jsonDictionary = File.ReadAllText(filePath);
+			Dictionary<string, string> pairs = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonDictionary) ?? new();
+			return pairs[key] ?? "";
+		}
+		catch
+		{
+			return "";
+		}
+	}
+
+	private string GetLocaleFilePath()
+	{
+		string culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLower();
+		string filePath = Path.Combine(LocalesPath, culture + ".json");
+		return File.Exists(filePath) ? filePath : Path.Combine(LocalesPath, "en.json");
 	}
 
 	private string? GetString(string key)
@@ -117,32 +137,6 @@ public class JsonStringLocalizer(IDistributedCache cache, ILibreTranslateService
 			}
 		}
 		return value;
-	}
-
-	private string GetLocaleFilePath()
-	{
-		string culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLower();
-		string filePath = Path.Combine(LocalesPath, culture + ".json");
-		return File.Exists(filePath) ? filePath : Path.Combine(LocalesPath, "en.json");
-	}
-
-	private static string? GetValueFromJson(string key, string filePath)
-	{
-		if(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-		{
-			return default;
-		}
-
-		try
-		{
-			string jsonDictionary = File.ReadAllText(filePath);
-			Dictionary<string, string> pairs = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonDictionary) ?? new();
-			return pairs[key] ?? "";
-		}
-		catch
-		{
-			return "";
-		}
 	}
 
 	private Response<TranslateResult> TranslateSync(

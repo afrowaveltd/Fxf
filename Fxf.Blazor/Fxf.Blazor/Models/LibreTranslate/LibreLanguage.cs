@@ -1,12 +1,14 @@
 ﻿namespace Fxf.Blazor.Models.LibreTranslate;
 
 /// <summary>
-/// Represents a language supported by the LibreTranslate service, including its code, name, and target languages for
-/// translation.
+/// Represents a language supported by the LibreTranslate service, including its code, name, and
+/// target languages for translation.
 /// </summary>
-/// <remarks>This class provides information about a specific language, including its ISO code, display name,
-/// and the list of languages to which it can be translated. It is typically used to configure or query  supported
-/// translation options in the LibreTranslate API.</remarks>
+/// <remarks>
+/// This class provides information about a specific language, including its ISO code, display name,
+/// and the list of languages to which it can be translated. It is typically used to configure or
+/// query supported translation options in the LibreTranslate API.
+/// </remarks>
 public class LibreLanguage
 {
 	/// <summary>

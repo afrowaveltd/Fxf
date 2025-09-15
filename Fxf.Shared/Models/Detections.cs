@@ -3,8 +3,10 @@
 /// <summary>
 /// Represents a language detected by a language identification process, along with its confidence score.
 /// </summary>
-/// <remarks>This class is typically used to store the results of language detection algorithms, where the
-/// detected language and its associated confidence level are provided.</remarks>
+/// <remarks>
+/// This class is typically used to store the results of language detection algorithms, where the
+/// detected language and its associated confidence level are provided.
+/// </remarks>
 public class Detections
 {
 	/// <summary>

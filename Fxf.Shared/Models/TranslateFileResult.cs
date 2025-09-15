@@ -3,8 +3,10 @@
 /// <summary>
 /// Represents the result of a file translation operation performed by LibreTranslate.
 /// </summary>
-/// <remarks>This class contains the URL of the translated file, which can be used to access the file after the
-/// translation process.</remarks>
+/// <remarks>
+/// This class contains the URL of the translated file, which can be used to access the file after
+/// the translation process.
+/// </remarks>
 public class TranslateFileResult
 {
 	/// <summary>

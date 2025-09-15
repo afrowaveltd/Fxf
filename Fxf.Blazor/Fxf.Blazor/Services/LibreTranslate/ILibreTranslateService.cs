@@ -1,9 +1,8 @@
-﻿using Fxf.Shared.Models;
-
-namespace Fxf.Blazor.Services.LibreTranslate;
+﻿namespace Fxf.Blazor.Services.LibreTranslate;
 
 /// <summary>
-/// Defines methods for interacting with the LibreTranslate service, including language detection, translation, and file translation operations.
+/// Defines methods for interacting with the LibreTranslate service, including language detection,
+/// translation, and file translation operations.
 /// </summary>
 public interface ILibreTranslateService
 {
@@ -27,7 +26,9 @@ public interface ILibreTranslateService
 	/// <param name="sourceLanguage">The language code of the source file.</param>
 	/// <param name="targetLanguage">The language code to translate the file into.</param>
 	/// <param name="fileName">The name of the file being translated.</param>
-	/// <returns>A response containing the result of the file translation, including the URL of the translated file.</returns>
+	/// <returns>
+	/// A response containing the result of the file translation, including the URL of the translated file.
+	/// </returns>
 	Task<Response<TranslateFileResult>> TranslateFileAsync(Stream fileStream, string sourceLanguage, string targetLanguage, string fileName);
 
 	/// <summary>
@@ -36,7 +37,9 @@ public interface ILibreTranslateService
 	/// <param name="fileStream">The stream representing the file to translate.</param>
 	/// <param name="targetLanguage">The language code to translate the file into.</param>
 	/// <param name="fileName">The name of the file being translated.</param>
-	/// <returns>A response containing the result of the file translation, including the URL of the translated file.</returns>
+	/// <returns>
+	/// A response containing the result of the file translation, including the URL of the translated file.
+	/// </returns>
 	Task<Response<TranslateFileResult>> TranslateFileFromAnyLanguageAsync(Stream fileStream, string targetLanguage, string fileName);
 
 	/// <summary>

@@ -1,16 +1,10 @@
-﻿using Fxf.Blazor.Models.Settings;
-using Fxf.Blazor.Services;
-using Fxf.Blazor.Services.LibreTranslate;
-using Fxf.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Fxf.Blazor.Api;
 
 /// <summary>
-/// HTTP API for localization: lists languages and locales, reads/saves locale dictionaries,
-/// and performs text translation using LibreTranslate.
+/// HTTP API for localization: lists languages and locales, reads/saves locale dictionaries, and
+/// performs text translation using LibreTranslate.
 /// </summary>
 /// <remarks>
 /// Endpoints exposed by this controller:
@@ -19,18 +13,17 @@ namespace Fxf.Blazor.Api;
 /// - Get/save locale dictionaries (single or bulk)
 /// - Translate/localize text
 ///
-/// Dependencies are provided via DI:
-/// <see cref="ILanguageService"/> for language metadata and dictionary I/O,
-/// <see cref="IStringLocalizer{T}"/> for localized messages,
-/// <see cref="IHttpContextAccessor"/> for HTTP context,
-/// and <see cref="ILibreTranslateService"/> for translation operations.
+/// Dependencies are provided via DI: <see cref="ILanguageService"/> for language metadata and
+/// dictionary I/O, <see cref="IStringLocalizer{T}"/> for localized messages, <see
+/// cref="IHttpContextAccessor"/> for HTTP context, and <see cref="ILibreTranslateService"/> for
+/// translation operations.
 /// </remarks>
 /// <param name="languageService">Service for language metadata and locale dictionary operations.</param>
 /// <param name="t">Localizer for user-facing and error messages.</param>
 /// <param name="accessor">Accessor for the current HTTP context.</param>
 /// <param name="cookieService">Service allowing to access and read cookies</param>
 /// <param name="libre">Service that integrates with LibreTranslate.</param>
-[Route("api/[controller]")]
+[Microsoft.AspNetCore.Components.Route("api/[controller]")]
 [ApiController]
 public class LocalizationController(ILanguageService languageService,
 	 IStringLocalizer<LocalizationController> t,
@@ -47,7 +40,9 @@ public class LocalizationController(ILanguageService languageService,
 	/// <summary>
 	/// Gets all available locale dictionaries for the specified context (client or server).
 	/// </summary>
-	/// <param name="is_client">True to return client (WebAssembly) locales; false for server locales. Defaults to true.</param>
+	/// <param name="is_client">
+	/// True to return client (WebAssembly) locales; false for server locales. Defaults to true.
+	/// </param>
 	/// <returns>
 	/// 200 OK with a <see cref="TranslationTree"/> when locales are available; otherwise 404 Not Found.
 	/// </returns>
@@ -85,7 +80,8 @@ public class LocalizationController(ILanguageService languageService,
 	/// </summary>
 	/// <param name="code">The ISO language code (e.g., "en", "cs").</param>
 	/// <returns>
-	/// 200 OK with the language data; 400 Bad Request on invalid input; 404 Not Found if the language does not exist.
+	/// 200 OK with the language data; 400 Bad Request on invalid input; 404 Not Found if the
+	/// language does not exist.
 	/// </returns>
 	/// <response code="200">Language information was found and returned.</response>
 	/// <response code="400">The <paramref name="code"/> parameter is missing or invalid.</response>
@@ -124,9 +120,13 @@ public class LocalizationController(ILanguageService languageService,
 	/// Gets the translation dictionary for the specified language code.
 	/// </summary>
 	/// <param name="code">The ISO language code to retrieve (e.g., "en", "cs").</param>
-	/// <param name="is_client">True to read the client (WebAssembly) dictionary; false for the server dictionary. Defaults to true.</param>
+	/// <param name="is_client">
+	/// True to read the client (WebAssembly) dictionary; false for the server dictionary. Defaults
+	/// to true.
+	/// </param>
 	/// <returns>
-	/// 200 OK with the language dictionary or a warning payload; 400 Bad Request on failure; 404 Not Found when missing.
+	/// 200 OK with the language dictionary or a warning payload; 400 Bad Request on failure; 404 Not
+	/// Found when missing.
 	/// </returns>
 	/// <response code="200">Dictionary was returned.</response>
 	/// <response code="400">The request failed (invalid input or processing error).</response>
@@ -159,15 +159,17 @@ public class LocalizationController(ILanguageService languageService,
 	/// Localizes a resource key or translates raw text.
 	/// </summary>
 	/// <remarks>
-	/// If both <paramref name="target"/> and <paramref name="source"/> are null, the localized resource value
-	/// for <paramref name="query"/> is returned. Otherwise, the text is translated using LibreTranslate.
+	/// If both <paramref name="target"/> and <paramref name="source"/> are null, the localized
+	/// resource value for <paramref name="query"/> is returned. Otherwise, the text is translated
+	/// using LibreTranslate.
 	/// Defaults: <paramref name="source"/> = "en"; <paramref name="target"/> = current UI culture.
 	/// </remarks>
 	/// <param name="query">The text key or raw text to localize/translate.</param>
 	/// <param name="target">Target language ISO code. If null, the current UI culture is used.</param>
 	/// <param name="source">Source language ISO code. If null, "en" is used.</param>
 	/// <returns>
-	/// 200 OK with a localized string or <see cref="TranslateResult"/>; 400 Bad Request on invalid input or translation failure.
+	/// 200 OK with a localized string or <see cref="TranslateResult"/>; 400 Bad Request on invalid
+	/// input or translation failure.
 	/// </returns>
 	/// <response code="200">Localization/translation succeeded.</response>
 	/// <response code="400">The input was invalid or translation failed.</response>
@@ -215,13 +217,16 @@ public class LocalizationController(ILanguageService languageService,
 	/// Saves a locale dictionary for the specified language code.
 	/// </summary>
 	/// <remarks>
-	/// The request body must be a JSON object of string-to-string key/value pairs.
-	/// Returns 400 when the body is empty, invalid JSON, or not a valid dictionary.
+	/// The request body must be a JSON object of string-to-string key/value pairs. Returns 400 when
+	/// the body is empty, invalid JSON, or not a valid dictionary.
 	/// </remarks>
 	/// <param name="code">The ISO language code for which the data is being saved.</param>
-	/// <param name="is_client">True to save to client (WebAssembly) locales; false to server locales. Defaults to true.</param>
+	/// <param name="is_client">
+	/// True to save to client (WebAssembly) locales; false to server locales. Defaults to true.
+	/// </param>
 	/// <returns>
-	/// 200 OK when saved successfully (or with warnings); 400 Bad Request on invalid input; 404 Not Found when the language is missing.
+	/// 200 OK when saved successfully (or with warnings); 400 Bad Request on invalid input; 404 Not
+	/// Found when the language is missing.
 	/// </returns>
 	/// <response code="200">Dictionary saved or a warning result is returned.</response>
 	/// <response code="400">The request body is empty, not valid JSON, or not a valid dictionary.</response>
@@ -280,7 +285,9 @@ public class LocalizationController(ILanguageService languageService,
 	/// The request body must contain a valid JSON representation of a <see cref="TranslationTree"/>.
 	/// Returns 400 if the body is empty or invalid JSON.
 	/// </remarks>
-	/// <param name="is_client">True to save client (WebAssembly) translations; false for server. Defaults to true.</param>
+	/// <param name="is_client">
+	/// True to save client (WebAssembly) translations; false for server. Defaults to true.
+	/// </param>
 	/// <returns>
 	/// 200 OK with the per-language result map on success; 400 Bad Request on invalid input or failure.
 	/// </returns>
@@ -324,10 +331,10 @@ public class LocalizationController(ILanguageService languageService,
 	/// <summary>
 	/// Gets the last stored locale dictionary for the specified context.
 	/// </summary>
-	/// <param name="is_client">True for client (WebAssembly) context; false for server. Defaults to true.</param>
-	/// <returns>
-	/// 200 OK with the last stored dictionary; otherwise 404 Not Found.
-	/// </returns>
+	/// <param name="is_client">
+	/// True for client (WebAssembly) context; false for server. Defaults to true.
+	/// </param>
+	/// <returns>200 OK with the last stored dictionary; otherwise 404 Not Found.</returns>
 	/// <response code="200">The last stored dictionary was found and returned.</response>
 	/// <response code="404">No stored dictionary is available.</response>
 	[HttpGet("get_old/{is_client?}")]
@@ -345,12 +352,15 @@ public class LocalizationController(ILanguageService languageService,
 	/// Saves previously exported/temporary translation data provided in the request body.
 	/// </summary>
 	/// <remarks>
-	/// The request body must be a JSON object of string-to-string key/value pairs. Returns 400 for empty body,
-	/// invalid JSON, or invalid dictionary content.
+	/// The request body must be a JSON object of string-to-string key/value pairs. Returns 400 for
+	/// empty body, invalid JSON, or invalid dictionary content.
 	/// </remarks>
-	/// <param name="is_client">True to save for client (WebAssembly) context; false for server. Defaults to true.</param>
+	/// <param name="is_client">
+	/// True to save for client (WebAssembly) context; false for server. Defaults to true.
+	/// </param>
 	/// <returns>
-	/// 200 OK when saved; 400 Bad Request on invalid input; 404 Not Found when the target language cannot be resolved.
+	/// 200 OK when saved; 400 Bad Request on invalid input; 404 Not Found when the target language
+	/// cannot be resolved.
 	/// </returns>
 	/// <response code="200">Dictionary saved.</response>
 	/// <response code="400">The request body is empty, not valid JSON, or not a valid dictionary.</response>
@@ -399,10 +409,14 @@ public class LocalizationController(ILanguageService languageService,
 	/// <summary>
 	/// Retrieves the user's locale based on the current HTTP request.
 	/// </summary>
-	/// <remarks>This method extracts the user's locale from the HTTP request context. If the locale cannot be
-	/// determined, a default locale of "en" is provided.</remarks>
-	/// <returns>An <see cref="IActionResult"/> containing a <see cref="UiLocale"/> object with the user's locale. If no locale is
-	/// determined, the default locale "en" is returned.</returns>
+	/// <remarks>
+	/// This method extracts the user's locale from the HTTP request context. If the locale cannot be
+	/// determined, a default locale of "en" is provided.
+	/// </remarks>
+	/// <returns>
+	/// An <see cref="IActionResult"/> containing a <see cref="UiLocale"/> object with the user's
+	/// locale. If no locale is determined, the default locale "en" is returned.
+	/// </returns>
 	[HttpGet("get_my_locales")]
 	public IActionResult GetMyLocales()
 	{
@@ -419,14 +433,31 @@ public class LocalizationController(ILanguageService languageService,
 	/// <summary>
 	/// Retrieves the full list of available Libre languages and their details.
 	/// </summary>
-	/// <remarks>This method fetches the list of available languages from an external source and processes it to
-	/// return detailed information. If no languages are available or an error occurs during processing, an appropriate
-	/// HTTP status code is returned.</remarks>
-	/// <returns>An <see cref="IActionResult"/> containing the following: <list type="bullet"> <item><description><see
-	/// cref="OkObjectResult"/> with the list of languages if the operation is successful.</description></item>
-	/// <item><description><see cref="NotFoundResult"/> if no languages are available or the processed data is
-	/// null.</description></item> <item><description><see cref="BadRequestObjectResult"/> with an error message if the
-	/// operation fails.</description></item> </list></returns>
+	/// <remarks>
+	/// This method fetches the list of available languages from an external source and processes it
+	/// to return detailed information. If no languages are available or an error occurs during
+	/// processing, an appropriate HTTP status code is returned.
+	/// </remarks>
+	/// <returns>
+	/// An <see cref="IActionResult"/> containing the following:
+	/// <list type="bullet">
+	/// <item>
+	/// <description>
+	/// <see cref="OkObjectResult"/> with the list of languages if the operation is successful.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// <see cref="NotFoundResult"/> if no languages are available or the processed data is null.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// <see cref="BadRequestObjectResult"/> with an error message if the operation fails.
+	/// </description>
+	/// </item>
+	/// </list>
+	/// </returns>
 	[HttpGet("get_libre_languages_full_list")]
 	public async Task<IActionResult> GetLibreLanguagesFullListAsync()
 	{
@@ -454,11 +485,15 @@ public class LocalizationController(ILanguageService languageService,
 	/// <summary>
 	/// Retrieves a list of available language codes from the Libre service.
 	/// </summary>
-	/// <remarks>This method asynchronously fetches the available language codes supported by the Libre service and
-	/// returns them in the response. The response is formatted as an HTTP 200 OK result containing the list of language
-	/// codes.</remarks>
-	/// <returns>An <see cref="IActionResult"/> containing an HTTP 200 OK response with the list of available language codes, or an
-	/// appropriate error response if the operation fails.</returns>
+	/// <remarks>
+	/// This method asynchronously fetches the available language codes supported by the Libre
+	/// service and returns them in the response. The response is formatted as an HTTP 200 OK result
+	/// containing the list of language codes.
+	/// </remarks>
+	/// <returns>
+	/// An <see cref="IActionResult"/> containing an HTTP 200 OK response with the list of available
+	/// language codes, or an appropriate error response if the operation fails.
+	/// </returns>
 
 	[HttpGet("get_libre_languages_code_list")]
 	public async Task<IActionResult> GetLibreLanguagesCodeListAsync()

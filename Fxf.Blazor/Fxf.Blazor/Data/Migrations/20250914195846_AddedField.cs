@@ -4,36 +4,36 @@
 
 namespace Fxf.Blazor.Migrations
 {
-    /// <inheritdoc />
-    public partial class AddedField : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "CycleChecks_DefaultTranslationFound",
-                table: "WorkerResults",
-                newName: "CycleChecks_DefaultServerTranslationFound");
+	/// <inheritdoc/>
+	public partial class AddedField : Migration
+	{
+		/// <inheritdoc/>
+		protected override void Down(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.DropColumn(
+				 name: "CycleChecks_DefaultClientTranslationFound",
+				 table: "WorkerResults");
 
-            migrationBuilder.AddColumn<bool>(
-                name: "CycleChecks_DefaultClientTranslationFound",
-                table: "WorkerResults",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-        }
+			migrationBuilder.RenameColumn(
+				 name: "CycleChecks_DefaultServerTranslationFound",
+				 table: "WorkerResults",
+				 newName: "CycleChecks_DefaultTranslationFound");
+		}
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "CycleChecks_DefaultClientTranslationFound",
-                table: "WorkerResults");
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.RenameColumn(
+				 name: "CycleChecks_DefaultTranslationFound",
+				 table: "WorkerResults",
+				 newName: "CycleChecks_DefaultServerTranslationFound");
 
-            migrationBuilder.RenameColumn(
-                name: "CycleChecks_DefaultServerTranslationFound",
-                table: "WorkerResults",
-                newName: "CycleChecks_DefaultTranslationFound");
-        }
-    }
+			migrationBuilder.AddColumn<bool>(
+				 name: "CycleChecks_DefaultClientTranslationFound",
+				 table: "WorkerResults",
+				 type: "bit",
+				 nullable: false,
+				 defaultValue: false);
+		}
+	}
 }

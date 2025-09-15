@@ -1,20 +1,15 @@
-﻿using Fxf.Blazor.Models.Settings;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Fxf.Blazor.Services;
+﻿namespace Fxf.Blazor.Services;
 
 /// <summary>
-/// Provides a lightweight HTTP helper tailored for translation-related operations.
-/// Configures an <see cref="HttpClient"/> using <see cref="Translator"/> settings and exposes
-/// convenience methods for common HTTP scenarios (GET, JSON POST, form POST, multipart POST).
+/// Provides a lightweight HTTP helper tailored for translation-related operations. Configures an
+/// <see cref="HttpClient"/> using <see cref="Translator"/> settings and exposes convenience methods
+/// for common HTTP scenarios (GET, JSON POST, form POST, multipart POST).
 /// </summary>
 public class HttpService : IHttpService
 {
-	private readonly Translator _translatorOptions;
-	private readonly HttpClient _httpClient;
-	private readonly string _baseUrl;
 	private readonly string _apiKey;
+	private readonly string _baseUrl;
+	private readonly HttpClient _httpClient;
 	private readonly bool _needsKey;
 
 	private readonly JsonSerializerOptions _options = new()
@@ -24,11 +19,15 @@ public class HttpService : IHttpService
 		ReferenceHandler = ReferenceHandler.IgnoreCycles
 	};
 
+	private readonly Translator _translatorOptions;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="HttpService"/> class using configuration-bound
 	/// <see cref="Translator"/> options to set the base address and authorization header.
 	/// </summary>
-	/// <param name="configuration">Application configuration used to bind the <c>Translator</c> section.</param>
+	/// <param name="configuration">
+	/// Application configuration used to bind the <c>Translator</c> section.
+	/// </param>
 	public HttpService(IConfiguration configuration)
 	{
 		_translatorOptions = configuration.GetSection("Translator").Get<Translator>() ?? new Translator();
@@ -39,7 +38,8 @@ public class HttpService : IHttpService
 		handler.ServerCertificateCustomValidationCallback = (msg, cert, chain, errors) =>
 		{
 			return true;                      // bypass for this host only
-														 //return errors == System.Net.Security.SslPolicyErrors.None;
+
+			//return errors == System.Net.Security.SslPolicyErrors.None;
 		};
 
 		_httpClient = new(handler)
@@ -57,31 +57,6 @@ public class HttpService : IHttpService
 	}
 
 	/// <summary>
-	/// Gets the configured <see cref="HttpClient"/> instance.
-	/// </summary>
-	/// <returns>The configured <see cref="HttpClient"/>.</returns>
-	public HttpClient GetLibreHttpClient() => _httpClient;
-
-	/// <summary>
-	/// Sends an HTTP request with the underlying <see cref="HttpClient"/>.
-	/// </summary>
-	/// <param name="request">The request message to send.</param>
-	/// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-	/// <returns>The <see cref="HttpResponseMessage"/> returned by the server.</returns>
-	public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken = default)
-		=> await _httpClient.SendAsync(request, cancellationToken);
-
-	/// <summary>
-	/// Reads HTTP content as JSON into a value of type <typeparamref name="T"/>.
-	/// </summary>
-	/// <typeparam name="T">The target type to deserialize into.</typeparam>
-	/// <param name="content">The HTTP content to read.</param>
-	/// <param name="options">Optional <see cref="JsonSerializerOptions"/>; when null, uses <see cref="JsonSerializerDefaults.Web"/>.</param>
-	/// <returns>The deserialized value, or <see langword="null"/> if the payload is empty.</returns>
-	public async Task<T?> ReadJsonAsync<T>(HttpContent content, JsonSerializerOptions? options = null)
-			=> await content.ReadFromJsonAsync<T>(options ?? new JsonSerializerOptions(JsonSerializerDefaults.Web));
-
-	/// <summary>
 	/// Sends a GET request to the specified URL with optional headers.
 	/// </summary>
 	/// <param name="url">The request URL (relative or absolute).</param>
@@ -92,6 +67,40 @@ public class HttpService : IHttpService
 		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
 		AddHeaders(request, headers);
 		return await _httpClient.SendAsync(request);
+	}
+
+	/// <summary>
+	/// Gets the configured <see cref="HttpClient"/> instance.
+	/// </summary>
+	/// <returns>The configured <see cref="HttpClient"/>.</returns>
+	public HttpClient GetLibreHttpClient() => _httpClient;
+
+	/// <summary>
+	/// Sends a POST request with <see cref="FormUrlEncodedContent"/> to the specified URL with
+	/// optional headers.
+	/// </summary>
+	/// <param name="url">The request URL (relative or absolute).</param>
+	/// <param name="formFields">The form fields to send.</param>
+	/// <param name="headers">Optional headers to include in the request.</param>
+	/// <returns>
+	/// The <see cref="HttpResponseMessage"/> returned by the server; in case of an exception, a
+	/// default message instance.
+	/// </returns>
+	public async Task<HttpResponseMessage> PostFormAsync(string url, Dictionary<string, string> formFields, Dictionary<string, string>? headers = null)
+	{
+		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url)
+		{
+			Content = new FormUrlEncodedContent(formFields)
+		};
+		AddHeaders(request, headers);
+		try
+		{
+			return await _httpClient.SendAsync(request);
+		}
+		catch
+		{
+			return new();
+		}
 	}
 
 	/// <summary>
@@ -110,30 +119,6 @@ public class HttpService : IHttpService
 		};
 		AddHeaders(request, headers);
 		return await _httpClient.SendAsync(request);
-	}
-
-	/// <summary>
-	/// Sends a POST request with <see cref="FormUrlEncodedContent"/> to the specified URL with optional headers.
-	/// </summary>
-	/// <param name="url">The request URL (relative or absolute).</param>
-	/// <param name="formFields">The form fields to send.</param>
-	/// <param name="headers">Optional headers to include in the request.</param>
-	/// <returns>The <see cref="HttpResponseMessage"/> returned by the server; in case of an exception, a default message instance.</returns>
-	public async Task<HttpResponseMessage> PostFormAsync(string url, Dictionary<string, string> formFields, Dictionary<string, string>? headers = null)
-	{
-		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url)
-		{
-			Content = new FormUrlEncodedContent(formFields)
-		};
-		AddHeaders(request, headers);
-		try
-		{
-			return await _httpClient.SendAsync(request);
-		}
-		catch
-		{
-			return new();
-		}
 	}
 
 	/// <summary>
@@ -173,6 +158,27 @@ public class HttpService : IHttpService
 		AddHeaders(request, headers);
 		return await _httpClient.SendAsync(request);
 	}
+
+	/// <summary>
+	/// Reads HTTP content as JSON into a value of type <typeparamref name="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The target type to deserialize into.</typeparam>
+	/// <param name="content">The HTTP content to read.</param>
+	/// <param name="options">
+	/// Optional <see cref="JsonSerializerOptions"/>; when null, uses <see cref="JsonSerializerDefaults.Web"/>.
+	/// </param>
+	/// <returns>The deserialized value, or <see langword="null"/> if the payload is empty.</returns>
+	public async Task<T?> ReadJsonAsync<T>(HttpContent content, JsonSerializerOptions? options = null)
+			=> await content.ReadFromJsonAsync<T>(options ?? new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+	/// <summary>
+	/// Sends an HTTP request with the underlying <see cref="HttpClient"/>.
+	/// </summary>
+	/// <param name="request">The request message to send.</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+	/// <returns>The <see cref="HttpResponseMessage"/> returned by the server.</returns>
+	public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken = default)
+		=> await _httpClient.SendAsync(request, cancellationToken);
 
 	/// <summary>
 	/// Adds custom headers to the specified request.

@@ -3,8 +3,8 @@
 namespace Fxf.Blazor.Client.Services;
 
 /// <summary>
-/// Defines methods for interacting with the backend localization and translation API.
-/// Provides access to locale dictionaries, language metadata, and translation operations.
+/// Defines methods for interacting with the backend localization and translation API. Provides
+/// access to locale dictionaries, language metadata, and translation operations.
 /// </summary>
 public interface IApiClientService
 {
@@ -49,18 +49,27 @@ public interface IApiClientService
 	/// <summary>
 	/// Retrieves a list of languages supported by the Libre service.
 	/// </summary>
-	/// <remarks>The returned list may vary depending on the configuration or version of the Libre service.
-	/// Ensure that the service is properly configured and accessible before calling this method.</remarks>
-	/// <returns>A task that represents the asynchronous operation. The task result contains a list of  <see cref="Language"/>
-	/// objects representing the supported languages.</returns>
+	/// <remarks>
+	/// The returned list may vary depending on the configuration or version of the Libre service.
+	/// Ensure that the service is properly configured and accessible before calling this method.
+	/// </remarks>
+	/// <returns>
+	/// A task that represents the asynchronous operation. The task result contains a list of <see
+	/// cref="Language"/> objects representing the supported languages.
+	/// </returns>
 	Task<List<Language>> GetLibreLanguages();
 
 	/// <summary>
 	/// Retrieves the list of language codes supported by the Libre service.
 	/// </summary>
-	/// <remarks>The returned language codes follow standard ISO 639-1 or similar conventions, depending on the
-	/// service's implementation.</remarks>
-	/// <returns>An array of strings containing the language codes. The array will be empty if no languages are supported.</returns>
+	/// <remarks>
+	/// The returned language codes follow standard ISO 639-1 or similar conventions, depending on
+	/// the service's implementation.
+	/// </remarks>
+	/// <returns>
+	/// An array of strings containing the language codes. The array will be empty if no languages
+	/// are supported.
+	/// </returns>
 	Task<string[]> GetLibreLanguagesCodes();
 
 	/// <summary>
@@ -83,11 +92,13 @@ public interface IApiClientService
 	Task LoadDefaultDictionary();
 
 	/// <summary>
-	/// Loads a locale dictionary for the specified language code and stores it in <see cref="LocaleDictionary"/>.
-	/// Falls back to English if the requested code is unavailable.
+	/// Loads a locale dictionary for the specified language code and stores it in <see
+	/// cref="LocaleDictionary"/>. Falls back to English if the requested code is unavailable.
 	/// </summary>
 	/// <param name="code">Two-letter language code (e.g. "en"). Defaults to "en" if null.</param>
-	/// <param name="isClient">Whether to load the client dictionary (true) or server dictionary (false).</param>
+	/// <param name="isClient">
+	/// Whether to load the client dictionary (true) or server dictionary (false).
+	/// </param>
 	Task LoadDictionary(string code, bool isClient = true);
 
 	/// <summary>
