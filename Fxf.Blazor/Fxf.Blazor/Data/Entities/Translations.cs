@@ -30,10 +30,10 @@ public class Translations
 	/// <summary>
 	/// Gets or sets the server translation requests, keyed by language or resource.
 	/// </summary>
-	public List<TranslationRequests> ServerRequestedTranslations { get; set; } = [];
+	public List<TranslationRequests> RequestedTranslations { get; set; } = [];
 
 	/// <summary>
 	/// Gets or sets the server translation results, keyed by language or resource.
 	/// </summary>
-	public List<TranslationResults> ServerResultOfTranslating { get; set; } = [];
+	public List<TranslationResults> ResultOfTranslating { get; set; } = [];
 }

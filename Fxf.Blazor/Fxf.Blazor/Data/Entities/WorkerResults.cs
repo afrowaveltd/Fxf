@@ -47,15 +47,25 @@ public class WorkerResults
 	/// <summary>
 	/// Gets or sets the translation requests made during the worker process.
 	/// </summary>
-	public TranslationRequests TranslationRequests { get; set; } = new();
+	public Translations BackendTranslations { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets the translation results produced by the worker process.
 	/// </summary>
-	public TranslationResults TranslationResults { get; set; } = new();
+	public Translations FrontendTranslations { get; set; } = new();
+
+	/// <summary>
+	/// Gets or sets the results of the cleanup operation.
+	/// </summary>
+	public CleanupResults CleanupResults { get; set; } = new();
 
 	/// <summary>
 	/// Gets or sets a list of error messages, keyed by worker status.
 	/// </summary>
 	public List<WorkerError> ErrorMessages { get; set; } = [];
+
+	/// <summary>
+	/// Gets or sets the collection of errors encountered during translation.
+	/// </summary>
+	public List<TranslationError> TranslationErrors { get; set; } = [];
 }

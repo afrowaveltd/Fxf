@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\WorkerModels\**" />
+    <Content Remove="Models\WorkerModels\**" />
+    <EmbeddedResource Remove="Models\WorkerModels\**" />
+    <None Remove="Models\WorkerModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Fxf.Shared\Fxf.Shared.csproj" />
     <ProjectReference Include="..\Fxf.Blazor.Client\Fxf.Blazor.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.1.25451.107" />
@@ -33,8 +40,6 @@
   <ItemGroup>
     <Folder Include="Locales\" />
     <Folder Include="LocalesClient\" />
-    <Folder Include="Models\Entity\" />
-    <Folder Include="Models\WorkerModels\" />
   </ItemGroup>
 
 </Project>

@@ -18,11 +18,6 @@ public class LanguagesTranslations
 	public int TranslationsDone { get; set; } = 0;
 
 	/// <summary>
-	/// Gets or sets the number of translation errors encountered.
-	/// </summary>
-	public int TranslationErrors { get; set; } = 0;
-
-	/// <summary>
 	/// Gets or sets the collection of translation errors encountered during processing.
 	/// </summary>
 	public List<TranslationError> FailedTranslations { get; set; } = [];

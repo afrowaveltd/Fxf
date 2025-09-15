@@ -23,16 +23,6 @@ public class CycleChecks
 	public DateTime EndTime { get; set; } = DateTime.UtcNow;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the default translation was found.
-	/// </summary>
-	public bool DefaultServerTranslationFound { get; set; } = true;
-
-	/// <summary>
-	/// Gets or sets a value indicating whether the default client translation was found.
-	/// </summary>
-	public bool DefaultClientTranslationFound { get; set; } = true;
-
-	/// <summary>
 	/// Gets or sets a value indicating whether ignored languages were found.
 	/// </summary>
 	public bool IgnoredLanguagesFound { get; set; } = true;
@@ -41,14 +31,4 @@ public class CycleChecks
 	/// Gets or sets the count of Libre languages found.
 	/// </summary>
 	public int LibreLanguagesCount { get; set; } = 0;
-
-	/// <summary>
-	/// Gets or sets the frontend translations check results.
-	/// </summary>
-	public Translations FrontendTranslations { get; set; } = new();
-
-	/// <summary>
-	/// Gets or sets the backend translations check results.
-	/// </summary>
-	public Translations BackendTranslations { get; set; } = new();
 }

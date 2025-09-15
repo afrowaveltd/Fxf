@@ -46,69 +46,6 @@ namespace Fxf.Blazor.Data
 				cc.ToTable("WorkerResults"); // table-splitting
 
 				// --- FrontendTranslations (OwnsOne) ---
-				cc.OwnsOne(c => c.FrontendTranslations, ft =>
-				{
-					ft.ToTable("WorkerResults");
-
-					// Kolekce ServerRequestedTranslations (FRONTEND) -> vlastní tabulka
-					ft.OwnsMany(t => t.ServerRequestedTranslations, req =>
-					{
-						req.ToTable("Frontend_ServerRequestedTranslations");
-						req.WithOwner().HasForeignKey("WorkerResultsId");
-						req.Property<int>("Id").ValueGeneratedOnAdd();
-						req.HasKey("Id");
-						req.HasIndex("WorkerResultsId");
-					});
-
-					// Kolekce ServerResultOfTranslating (FRONTEND) -> vlastní tabulka + JSON converter
-					ft.OwnsMany(t => t.ServerResultOfTranslating, res =>
-					{
-						res.ToTable("Frontend_ServerResultOfTranslating");
-						res.WithOwner().HasForeignKey("WorkerResultsId");
-						res.Property<int>("Id").ValueGeneratedOnAdd();
-						res.HasKey("Id");
-						res.HasIndex("WorkerResultsId");
-
-						res.Property(r => r.TranslationErrors)
-							.HasConversion(
-								 v => JsonSerializer.Serialize(v ?? new List<string>(), json),
-								 v => string.IsNullOrWhiteSpace(v)
-										? new List<string>()
-										: (JsonSerializer.Deserialize<List<string>>(v!, json) ?? new List<string>())
-							);
-					});
-				});
-
-				cc.OwnsOne(c => c.BackendTranslations, bt =>
-				{
-					bt.ToTable("WorkerResults");
-
-					bt.OwnsMany(t => t.ServerRequestedTranslations, req =>
-					{
-						req.ToTable("Backend_ServerRequestedTranslations");
-						req.WithOwner().HasForeignKey("WorkerResultsId");
-						req.Property<int>("Id").ValueGeneratedOnAdd();
-						req.HasKey("Id");
-						req.HasIndex("WorkerResultsId");
-					});
-
-					bt.OwnsMany(t => t.ServerResultOfTranslating, res =>
-					{
-						res.ToTable("Backend_ServerResultOfTranslating");
-						res.WithOwner().HasForeignKey("WorkerResultsId");
-						res.Property<int>("Id").ValueGeneratedOnAdd();
-						res.HasKey("Id");
-						res.HasIndex("WorkerResultsId");
-
-						res.Property(r => r.TranslationErrors)
-							.HasConversion(
-								 v => JsonSerializer.Serialize(v ?? new List<string>(), json),
-								 v => string.IsNullOrWhiteSpace(v)
-										? new List<string>()
-										: (JsonSerializer.Deserialize<List<string>>(v!, json) ?? new List<string>())
-							);
-					});
-				});
 			});
 
 			workerResults.OwnsOne(wr => wr.LanguagesTranslations, lt =>
@@ -125,19 +62,50 @@ namespace Fxf.Blazor.Data
 				});
 			});
 
-			workerResults.OwnsOne(wr => wr.TranslationRequests, tr =>
+			workerResults.OwnsOne(wr => wr.BackendTranslations, bt =>
 			{
-				tr.ToTable("WorkerResults");
+				bt.ToTable("BackendTranslations");
+
+				bt.OwnsMany(s => s.RequestedTranslations, tr =>
+				{
+					bt.ToTable("BackendTranslationRequests");
+					bt.WithOwner().HasForeignKey("TranslationsId");
+					bt.Property<int>("Id").ValueGeneratedOnAdd();
+					bt.HasKey("Id");
+					bt.HasIndex("TranslationsId");
+				});
+
+				bt.OwnsMany(s => s.ResultOfTranslating, rt =>
+				{
+					rt.ToTable("BackendTranslationResults");
+					rt.WithOwner().HasForeignKey("TranslationsId");
+					rt.Property<int>("Id").ValueGeneratedOnAdd();
+					rt.HasKey("Id");
+					rt.HasIndex("TranslationsId");
+				});
 			});
 
-			workerResults.OwnsOne(wr => wr.TranslationResults, tr =>
+			workerResults.OwnsOne(wr => wr.FrontendTranslations, ft =>
 			{
-				tr.ToTable("WorkerResults");
-				tr.Property(r => r.TranslationErrors)
-				.HasConversion(
-					v => JsonSerializer.Serialize(v ?? new List<string>(), json),
-					v => string.IsNullOrWhiteSpace(v)
-					? new List<string>() : JsonSerializer.Deserialize<List<string>>(v, json) ?? new List<string>());
+				ft.ToTable("FrontendTranslations");
+
+				ft.OwnsMany(x => x.RequestedTranslations, tr =>
+				{
+					ft.ToTable("FrontendTranslationRequests");
+					ft.WithOwner().HasForeignKey("TranslationsId");
+					ft.Property<int>("Id").ValueGeneratedOnAdd();
+					ft.HasKey("Id");
+					ft.HasIndex("TranslationsId");
+				});
+
+				ft.OwnsMany(s => s.ResultOfTranslating, rt =>
+				{
+					ft.ToTable("FrontendTranslationResults");
+					ft.WithOwner().HasForeignKey("TranslationsId");
+					ft.Property<int>("Id").ValueGeneratedOnAdd();
+					ft.HasKey("Id");
+					ft.HasIndex("TranslationsId");
+				});
 			});
 
 			workerResults.OwnsMany(x => x.ErrorMessages, em =>
@@ -147,6 +115,20 @@ namespace Fxf.Blazor.Data
 				em.Property<int>("Id").ValueGeneratedOnAdd();
 				em.HasKey("Id");
 				em.HasIndex("WorkerResultsId");
+			});
+
+			workerResults.OwnsMany(x => x.TranslationErrors, x =>
+			{
+				x.ToTable("WorkerErrors");
+				x.WithOwner().HasForeignKey("WorkerResultsId");
+				x.Property<int>("Id").ValueGeneratedOnAdd();
+				x.HasKey("Id");
+				x.HasIndex("WorkerResultsId");
+			});
+
+			workerResults.OwnsOne(wr => wr.CleanupResults, cr =>
+			{
+				cr.ToTable("WorkerResults");
 			});
 
 			builder.Entity<SignalRConnection>(entity =>

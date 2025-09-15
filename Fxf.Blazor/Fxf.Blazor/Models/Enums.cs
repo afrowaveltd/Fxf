@@ -63,4 +63,28 @@ public class Enums
 		/// </summary>
 		IndexHub = 3
 	}
+
+	/// <summary>
+	/// Specifies the type of change applied to a phrase in a collection or data set.
+	/// </summary>
+	/// <remarks>Use this enumeration to indicate whether a phrase is being added, removed, or updated. This is
+	/// typically used in scenarios where tracking or responding to modifications in a set of phrases is required, such as
+	/// in event arguments or change notifications.</remarks>
+	public enum PhraseChange
+	{
+		/// <summary>
+		/// Adds an item to the collection.
+		/// </summary>
+		Add,
+
+		/// <summary>
+		/// Removes the specified element from the collection.
+		/// </summary>
+		Remove,
+
+		/// <summary>
+		/// Updates the current object or state with new information or changes.
+		/// </summary>
+		Update
+	}
 }

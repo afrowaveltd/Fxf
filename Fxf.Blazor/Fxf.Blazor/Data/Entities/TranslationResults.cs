@@ -13,12 +13,12 @@ public class TranslationResults
 	public string LanguageCode { get; set; } = string.Empty;
 
 	/// <summary>
-	/// Gets or sets the number of successful translations.
+	/// Gets or sets the mark of success
 	/// </summary>
-	public int SuccessfulTranslations { get; set; }
+	public bool Successful { get; set; }
 
 	/// <summary>
-	/// Gets or sets a dictionary of translation errors, keyed by language or resource.
+	/// Phrase that was translated
 	/// </summary>
-	public List<string> TranslationErrors { get; set; } = [];
+	public string Phrase { get; set; } = string.Empty;
 }
