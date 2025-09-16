@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using static Fxf.Blazor.Models.Enums;
 
 namespace Fxf.Blazor.Hubs;
 
@@ -6,19 +7,31 @@ namespace Fxf.Blazor.Hubs;
 /// SignalR hub for real-time localization and language updates. Provides methods for clients to
 /// request and update locale data, language metadata, dictionaries, and translations.
 /// </summary>
+/// <remarks>Initializes a new instance of the <see cref="LocalizationHub"/> class.</remarks>
+/// <param name="languageService">Service for language metadata and dictionary management.</param>
+/// <param name="activityLogger">Logger for hub activity events.</param>
+/// <param name="t">String localizer for localization messages.</param>
+/// <param name="libre">Service for translation operations.</param>
+/// <param name="accessor">HTTP context accessor for request information.</param>
+/// <param name="cookieService">Service for managing cookies.</param>
 public class LocalizationHub(
 	 ILanguageService languageService,
+	 IHubActivityLogger activityLogger,
 	 IStringLocalizer<LocalizationHub> t,
 	 ILibreTranslateService libre,
 	 IHttpContextAccessor accessor,
-	 ICookieService cookieService) : Hub<ILocalizationInterface>
-
+	 ICookieService cookieService) : BaseLoggingHub(activityLogger)
 {
-	private readonly IStringLocalizer<LocalizationHub> _t = t;
-	private readonly ILanguageService _languageService = languageService;
-	private readonly ILibreTranslateService _libreService = libre;
-	private readonly ICookieService _cookieService = cookieService;
-	private readonly IHttpContextAccessor _accessor = accessor;
+	private readonly IStringLocalizer<LocalizationHub> _t = t ?? throw new ArgumentNullException(nameof(t));
+	private readonly ILanguageService _languageService = languageService ?? throw new ArgumentNullException(nameof(languageService));
+	private readonly ILibreTranslateService _libreService = libre ?? throw new ArgumentNullException(nameof(libre));
+	private readonly ICookieService _cookieService = cookieService ?? throw new ArgumentNullException(nameof(cookieService));
+	private readonly IHttpContextAccessor _accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
+
+	/// <summary>
+	/// Gets the type of hub associated with this logging hub.
+	/// </summary>
+	protected override HubType HubType => HubType.Localization;
 
 	/// <summary>
 	/// Handles a request from the client to retrieve all available locale dictionaries.
@@ -27,7 +40,7 @@ public class LocalizationHub(
 	public async Task RequestLocales(bool isClient = true)
 	{
 		var request = await _languageService.GetAllDictionariesAsync(isClient);
-		await Clients.Caller.OnLocalesRequested(request, isClient);
+		await Clients.Caller.SendAsync("OnLocalesRequested", request, isClient);
 	}
 
 	/// <summary>
@@ -36,7 +49,7 @@ public class LocalizationHub(
 	public async Task RequestLanguages()
 	{
 		var languages = _languageService.GetAllLanguages();
-		await Clients.Caller.OnLanguagesRequested(languages);
+		await Clients.Caller.SendAsync("OnLanguagesRequested", languages);
 	}
 
 	/// <summary>
@@ -47,27 +60,27 @@ public class LocalizationHub(
 	{
 		if(code.IsNullOrEmpty())
 		{
-			await Clients.Caller.OnError(_t["Code cant be null"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Code cant be null"], _t["Data error"]);
 			return;
 		}
 		var response = _languageService.GetLanguageByCode(code);
 		if(response is null)
 		{
-			await Clients.Caller.OnError(_t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
 		if(response.Success != true)
 		{
-			await Clients.Caller.OnError(response.Message ?? _t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", response.Message ?? _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
 		if(response.Data is null)
 		{
 			// Language not found
-			await Clients.Caller.OnError(_t["Server responded with empty data"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Server responded with empty data"], _t["Data error"]);
 			return;
 		}
-		await Clients.Caller.OnLanguageInfoRequested(response.Data);
+		await Clients.Caller.SendAsync("OnLanguageInfoRequested", response.Data);
 	}
 
 	/// <summary>
@@ -79,7 +92,7 @@ public class LocalizationHub(
 	public async Task RequestDictionaryByCode(string code, bool isClient = true)
 	{
 		var dictionary = await _languageService.GetDictionaryAsync(code, isClient);
-		await Clients.Caller.OnDictionaryByCodeRequested(code, dictionary, isClient);
+		await Clients.Caller.SendAsync("OnDictionaryByCodeRequested", code, dictionary, isClient);
 	}
 
 	/// <summary>
@@ -95,12 +108,12 @@ public class LocalizationHub(
 				Success = false,
 				Message = _t["The query cannot be null or empty."]
 			};
-			await Clients.Caller.OnLocalizationRequested(query, errorResponse);
+			await Clients.Caller.SendAsync("OnLocalizationRequested", query, errorResponse);
 			return;
 		}
 		var target = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 		var result = await _libreService.TranslateTextAsync(query, "en", target);
-		await Clients.Caller.OnLocalizationRequested(query, result);
+		await Clients.Caller.SendAsync("OnLocalizationRequested", query, result);
 	}
 
 	/// <summary>
@@ -113,7 +126,7 @@ public class LocalizationHub(
 	{
 		if(query == null)
 		{
-			await Clients.Caller.OnError(_t["Empty text can't be translated"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Empty text can't be translated"], _t["Data error"]);
 			return;
 		}
 		if(from.IsNullOrEmpty())
@@ -130,11 +143,11 @@ public class LocalizationHub(
 			{
 				TranslatedText = query
 			};
-			await Clients.Caller.OnTranslationRequested(query, from, to, Response<TranslateResult>.Successful(res));
+			await Clients.Caller.SendAsync("OnTranslationRequested", query, from, to, Response<TranslateResult>.Successful(res));
 			return;
 		}
 		var result = await _libreService.TranslateTextAsync(query, from, to);
-		await Clients.Caller.OnTranslationRequested(query, from, to, result);
+		await Clients.Caller.SendAsync("OnTranslationRequested", query, from, to, result);
 	}
 
 	/// <summary>
@@ -147,26 +160,26 @@ public class LocalizationHub(
 	{
 		if(data == null || data.Count == 0)
 		{
-			await Clients.Caller.OnError(_t["No data to save"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["No data to save"], _t["Data error"]);
 			return;
 		}
 		if(code.IsNullOrEmpty())
 		{
-			await Clients.Caller.OnError(_t["Code cant be null"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Code cant be null"], _t["Data error"]);
 			return;
 		}
 		var response = await _languageService.SaveDictionaryAsync(code, data, isClient);
 		if(response == null)
 		{
-			await Clients.Caller.OnError(_t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
 		if(response.Success != true)
 		{
-			await Clients.Caller.OnError(response.Message ?? _t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", response.Message ?? _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
-		await Clients.Caller.OnLocaleSaveRequested(code, true, isClient);
+		await Clients.Caller.SendAsync("OnLocaleSaveRequested", code, true, isClient);
 	}
 
 	/// <summary>
@@ -177,21 +190,21 @@ public class LocalizationHub(
 	{
 		if(tree == null || tree.Translations == null || tree.Translations.Count == 0)
 		{
-			await Clients.Caller.OnError(_t["No data to save"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["No data to save"], _t["Data error"]);
 			return;
 		}
 		var response = await _languageService.SaveTranslationsAsync(tree);
 		if(response == null)
 		{
-			await Clients.Caller.OnError(_t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
 		if(response.Success != true)
 		{
-			await Clients.Caller.OnError(response.Message ?? _t["Error response from the server"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", response.Message ?? _t["Error response from the server"], _t["Data error"]);
 			return;
 		}
-		await Clients.Caller.OnBulkSaveRequested(response.Data ?? new Dictionary<string, bool>());
+		await Clients.Caller.SendAsync("OnBulkSaveRequested", response.Data ?? new Dictionary<string, bool>());
 	}
 
 	/// <summary>
@@ -202,7 +215,7 @@ public class LocalizationHub(
 	public async Task GetOldAsync(bool isClient = true)
 	{
 		var response = await _languageService.GetLastStored(isClient);
-		await Clients.Caller.OnOldLocaleRequested(response.Data ?? new(), isClient);
+		await Clients.Caller.SendAsync("OnOldLocaleRequested", response.Data ?? new(), isClient);
 	}
 
 	/// <summary>
@@ -217,15 +230,15 @@ public class LocalizationHub(
 		var response = await _languageService.SaveOldTranslationAsync(data, isClient);
 		if(response == null)
 		{
-			await Clients.Caller.OnError(_t["The dictionary is empty"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", _t["The dictionary is empty"], _t["Data error"]);
 			return;
 		}
 		if(response.Success != true)
 		{
-			await Clients.Caller.OnError(response.Message ?? _t["Error saving old translations"], _t["Data error"]);
+			await Clients.Caller.SendAsync("OnError", response.Message ?? _t["Error saving old translations"], _t["Data error"]);
 			return;
 		}
-		await Clients.Caller.OnOldLocaleSaveRequested(response.Success, isClient);
+		await Clients.Caller.SendAsync("OnOldLocaleSaveRequested", response.Success, isClient);
 	}
 
 	/// <summary>
@@ -235,15 +248,20 @@ public class LocalizationHub(
 	/// This method retrieves the culture information from the current HTTP request and defaults to
 	/// "en" if no culture is detected. The detected locale is then sent to the caller using the interface.
 	/// </remarks>
-	/// <returns></returns>
 	public async Task DetectLocales()
 	{
-#pragma warning disable CS8604 // Může jít o argument s odkazem null.
+#pragma warning disable CS8604 // May be null reference argument.
 		string detected = GetCultureFromRequest(_accessor.HttpContext) ?? "en";
-#pragma warning restore CS8604 // Může jít o argument s odkazem null.
-		await Clients.Caller.OnDetectLocales(new UiLocale() { Locale = detected });
+#pragma warning restore CS8604 // May be null reference argument.
+		await Clients.Caller.SendAsync("OnDetectLocales", new UiLocale() { Locale = detected });
 	}
 
+	/// <summary>
+	/// Gets the culture code from the current HTTP request using cookies, query string, or
+	/// Accept-Language header.
+	/// </summary>
+	/// <param name="context">The HTTP context to extract culture information from.</param>
+	/// <returns>The detected culture code, or "en" if not found.</returns>
 	private string? GetCultureFromRequest(HttpContext context)
 	{
 		string? culture = _cookieService.GetCookie("BlazorCulture");

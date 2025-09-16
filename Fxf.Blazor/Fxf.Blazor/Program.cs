@@ -35,10 +35,10 @@ builder.Services.AddControllers()
              options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
              // Allow Lists and nested objects
-             options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
+             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
 
              // Handle circular references if applicable
-             options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
           })
           .AddXmlDataContractSerializerFormatters();
 
@@ -165,5 +165,7 @@ app.MapControllers();
 
 // Here we add starting procedures for localization.
 app.MapHub<LocalizationHub>("/localization_hub");
+app.MapHub<WorkerHub>("/worker_hub");
+app.MapHub<IndexHub>("/index_hub");
 
 app.Run();
