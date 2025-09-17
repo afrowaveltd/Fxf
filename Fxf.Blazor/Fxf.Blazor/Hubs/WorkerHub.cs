@@ -14,24 +14,17 @@ namespace Fxf.Blazor.Hubs;
 /// worker-specific functionality. Thread safety and connection management are handled by the
 /// underlying SignalR infrastructure.
 /// </remarks>
-public class WorkerHub : BaseLoggingHub
+/// <remarks>
+/// Initializes a new instance of the WorkerHub class with the specified activity logger and
+/// application database context.
+/// </remarks>
+/// <param name="activityLogger">The activity logger used to record hub activity events and diagnostics.</param>
+/// <param name="context">
+/// The application database context used for data access operations within the hub.
+/// </param>
+public class WorkerHub(IHubActivityLogger activityLogger, ApplicationDbContext context) : BaseLoggingHub(activityLogger)
 {
-	private readonly ApplicationDbContext _context;
-
-	/// <summary>
-	/// Initializes a new instance of the WorkerHub class with the specified activity logger and
-	/// application database context.
-	/// </summary>
-	/// <param name="activityLogger">
-	/// The activity logger used to record hub activity events and diagnostics.
-	/// </param>
-	/// <param name="context">
-	/// The application database context used for data access operations within the hub.
-	/// </param>
-	public WorkerHub(IHubActivityLogger activityLogger, ApplicationDbContext context) : base(activityLogger)
-	{
-		_context = context;
-	}
+	private readonly ApplicationDbContext _context = context;
 
 	/// <summary>
 	/// Gets the type of hub associated with this instance.
