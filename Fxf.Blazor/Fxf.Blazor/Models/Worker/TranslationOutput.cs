@@ -33,14 +33,13 @@ public class TranslationOutput
 	/// </summary>
 	public bool Successful { get; set; } = true;
 
+	/// <summary>
+	/// Gets or sets a value indicating the target of the translation (Languages, Frontend, Backend)
+	/// </summary>
 	public TranslationTarget Target { get; set; } = TranslationTarget.Frontend;
 
 	/// <summary>
 	/// Gets or sets the string value associated with this instance.
 	/// </summary>
 	public string Value { get; set; } = string.Empty;
-
-	/// <summary>
-	/// Gets or sets the target area for the translation operation (e.g., frontend or backend).
-	/// </summary>
 }
