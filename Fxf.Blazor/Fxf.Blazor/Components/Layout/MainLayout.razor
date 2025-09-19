@@ -1,54 +1,57 @@
 ﻿@inherits LayoutComponentBase
+@inject IStringLocalizer<MainLayout> localizer
 @inject IThemeService theme
 @inject ISelectOptionsService selectOptions
 @{
-    List<SelectListItem> themes = selectOptions.GetThemes(theme.CurrentTheme);
-    Console.WriteLine("Found " + themes.Count + " themes");
-} 
+	List<SelectOption> themes = selectOptions.GetThemes(theme.CurrentTheme);
+	Console.WriteLine("Found " + themes.Count + " themes");
+}
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	<div class="sidebar">
+		<NavMenu />
+	</div>
 
-    <main>
-        <div class="top-row px-4">
-            <div>
-                <select id="language-selector"
-                        style="margin-right: 10px; padding-top:2px; padding-bottom: 2px; padding-left: 5px;"
-                        onchange="changeLanguage(this.value)"
-                        class="nav-item nav-link form">
-                </select>
-            </div>
-            <div>
-                <select id="theme_selector" class="nav-item nav-link form"
-                        style="margin-right: 10px; padding-top:2px;  padding-bottom: 2px; padding-left: 5px;"
-                        onchange="setTheme(this.value)" asp-items="@themes">
-                       
-                        @foreach(var them in themes)
-                        {
-                          
-                            <option value="@them.Value" selected="@them.Selected">@them.Text</option>
-                        }
-                    
-                </select>
-            </div>
-            <!--
+	<main>
+		<div class="top-row px-4">
+			<div>
+				<select id="language-selector"
+						style="margin-right: 10px; padding-top:2px; padding-bottom: 2px; padding-left: 5px;"
+						onchange="changeLanguage(this.value)"
+						class="nav-item nav-link form">
+				</select>
+			</div>
+			<div>
+				<select id="theme_selector" class="nav-item nav-link form"
+						style="margin-right: 10px; padding-top:2px;  padding-bottom: 2px; padding-left: 5px;"
+						onchange="setTheme(this.value)" asp-items="@themes">
 
-            <div id="language_select" style="margin-left: 1.3rem">Jazyk</div>
-            <div id="theme_select" style="margin-left: 1.3rem">Motiv</div>
-            -->
-            <div id="topbar_user" style="margin-left: 1.3rem"></div>
-            <div id="user_counts" style="margin-left: 0.1rem">1</div>
-        </div>
+					@foreach(var them in themes)
+					{
+						if(them.Selected)
+						{
+							<option value="@them.Value" selected>@them.Text</option>
+						}
+						else
+						{
+							<option value="@them.Value">@them.Text</option>
+						}
+					}
 
-        <article class="content px-4" onchange="reloadStatus">
-            @Body
-        </article>
-    </main>
+				</select>
+			</div>
+
+			<div id="topbar_user" style="margin-left: 1.3rem"></div>
+			<div id="user_counts" style="margin-left: 0.5rem"></div>
+		</div>
+
+		<article class="content px-4" onchange="reloadStatus">
+			@Body
+		</article>
+	</main>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+	@localizer["An unhandled error has occurred."]
+	<a href="." class="reload">@localizer["Reload"]</a>
+	<span class="dismiss">🗙</span>
 </div>

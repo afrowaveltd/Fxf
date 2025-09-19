@@ -1,7 +1,6 @@
-﻿
-namespace Fxf.Blazor.Services;
+﻿namespace Fxf.Blazor.Services;
 
 public interface ISelectOptionsService
 {
-	List<SelectListItem> GetThemes(string actualThemeName);
+	List<SelectOption> GetThemes(string actualThemeName);
 }
