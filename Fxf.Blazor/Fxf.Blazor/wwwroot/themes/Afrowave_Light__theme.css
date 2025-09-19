@@ -1,0 +1,45 @@
+﻿	@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
+
+:root {
+	--navbar-text: #111131;
+	--navbar: #aa6633;
+	--navbar2: #aa4411;
+	--navbar-border: #770033;
+	--text: #211212;
+	--background: #e0e0f3;
+	--dimmed: #353549;
+	--highlight: #000000;
+	--border: #101020;
+	--color2-background: #cfc7c7;
+	--color2-text: #251505;
+	--color2-border: #251515;
+	--help-text: #033a99;
+	--help-background: #FFFFEE;
+	--help-border: #033a99;
+	--table-row-background: #cfc7c7;
+	--table-row-alternate-background: #c7c1c1;
+	--table-th-text: #000000;
+	--table-row-text: #333333;
+	--table-th-background: #CCBBBB;
+	--table-border: #000011;
+	--input-background: #AAAAAA;
+	--input-border: #111122;
+	--input-text: #111122;
+	--input-placeholder: #777788;
+	--link: #664400;
+	--link-hover: #885500;
+	--link-active: #995500;
+	--link-visited: #202020;
+	--disabled-background: #555566;
+	--disabled-text: #aaaaff;
+	--success: #11aa11;
+	--info: #1111aa;
+	--warning: #aa2200;
+	--error: #aa0000;
+	--button-border: #111111;
+	--button-background: #aaaaaa;
+	--button-text: #111111;
+	--button-hover: #03dac6;
+	--font-face: "Ubuntu", sans-serif;
+	--border-radius: 5px; 
+}

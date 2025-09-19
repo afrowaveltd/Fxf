@@ -49,7 +49,7 @@ builder.Services.AddAntiforgery(options =>
        options.Cookie.Name = "XSRF-TOKEN";
        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
        options.Cookie.SameSite = SameSiteMode.Strict;
-       options.Cookie.HttpOnly = false;
+       options.Cookie.HttpOnly = true;
     });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
@@ -58,20 +58,22 @@ builder.Services.AddCascadingAuthenticationState();
 // middlewares
 builder.Services.AddTransient<LocalizationMiddleware>();
 
-// Transient services
-builder.Services.AddTransient<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+// Singleton services
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IHttpService, HttpService>();
+builder.Services.AddSingleton<ILibreTranslateService, LibreTranslateService>();
 
 // Scoped services
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddSingleton<ICookieService, CookieService>();
 builder.Services.AddScoped<IHubActivityLogger, HubActivityLogger>();
-
-// Singleton services
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddSingleton<IHttpService, HttpService>();
-builder.Services.AddSingleton<ILibreTranslateService, LibreTranslateService>();
+builder.Services.AddScoped<IThemeService, ThemeService>();
 builder.Services.AddSingleton<ILanguageService, LanguageService>();
+
+// Transient services
+builder.Services.AddTransient<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+builder.Services.AddTransient<ISelectOptionsService, SelectOptionsService>();
 
 // Worker services
 
@@ -152,7 +154,6 @@ app.MapScalarApiReference(options =>
 });
 
 app.UseAntiforgery();
-
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
@@ -160,6 +161,7 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Fxf.Blazor.Client._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
+// app.UseRouting();
 app.MapAdditionalIdentityEndpoints();
 app.MapControllers();
 

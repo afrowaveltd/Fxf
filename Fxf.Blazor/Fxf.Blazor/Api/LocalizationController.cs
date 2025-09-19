@@ -23,8 +23,8 @@ namespace Fxf.Blazor.Api;
 /// <param name="accessor">Accessor for the current HTTP context.</param>
 /// <param name="cookieService">Service allowing to access and read cookies</param>
 /// <param name="libre">Service that integrates with LibreTranslate.</param>
-[Microsoft.AspNetCore.Components.Route("api/[controller]")]
 [ApiController]
+[Microsoft.AspNetCore.Mvc.Route("/api/[controller]")]
 public class LocalizationController(ILanguageService languageService,
 	 IStringLocalizer<LocalizationController> t,
 	 IHttpContextAccessor accessor,

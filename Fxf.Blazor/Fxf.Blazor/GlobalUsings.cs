@@ -21,3 +21,4 @@ global using System.Text.Json.Serialization;
 global using Microsoft.AspNetCore.SignalR;
 global using Fxf.Blazor.Models.LibreTranslate;
 global using Microsoft.AspNetCore.HttpOverrides;
+global using Microsoft.AspNetCore.Mvc.Rendering;
