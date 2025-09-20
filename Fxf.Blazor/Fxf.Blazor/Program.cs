@@ -44,16 +44,25 @@ builder.Services.AddControllers()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAntiforgery(options =>
-    {
-       options.HeaderName = "X-XSRF-TOKEN";
-       options.Cookie.Name = "XSRF-TOKEN";
-       options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-       options.Cookie.SameSite = SameSiteMode.Strict;
-       options.Cookie.HttpOnly = true;
-    });
+{
+   options.HeaderName = "X-XSRF-TOKEN";
+   options.Cookie.Name = "XSRF-TOKEN";
+   options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+   options.Cookie.SameSite = SameSiteMode.Strict;
+   options.Cookie.HttpOnly = true;
+});
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLocalization();
 builder.Services.AddCascadingAuthenticationState();
+
+// Authorization
+builder.Services.AddAuthorization(options =>
+{
+   options.AddPolicy("RequireAdministrator", policy => policy.RequireRole("Administrator"));
+   options.AddPolicy("RequireUser", policy => policy.RequireRole("User"));
+   options.AddPolicy("RequireTranslator", policy => policy.RequireRole("Translator"));
+   options.AddPolicy("RequireOwner", policy => policy.RequireRole("Owner"));
+});
 
 // middlewares
 builder.Services.AddTransient<LocalizationMiddleware>();
@@ -78,25 +87,24 @@ builder.Services.AddTransient<ISelectOptionsService, SelectOptionsService>();
 // Worker services
 
 // Identity configuration
-builder.Services.AddAuthentication(options =>
-    {
-       options.DefaultScheme = IdentityConstants.ApplicationScheme;
-       options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
+/*builder.Services.AddAuthentication(options =>
+{
+   options.DefaultScheme = IdentityConstants.ApplicationScheme;
+   options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
     .AddIdentityCookies();
-
+*/
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options =>
-    {
-       options.SignIn.RequireConfirmedAccount = true;
-       options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
-    })
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+   options.SignIn.RequireConfirmedAccount = true;
+   options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
@@ -143,6 +151,11 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 
 app.UseHttpsRedirection();
 app.UseForwardedHeaders();
+
+// Důležité: Přidání autentizace a autorizace
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapOpenApi()
         .CacheOutput();
 app.MapScalarApiReference(options =>
@@ -160,8 +173,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Fxf.Blazor.Client._Imports).Assembly);
 
-// Add additional endpoints required by the Identity /Account Razor components.
-// app.UseRouting();
+// Add additional endpoints required by the Identity /Account Razor components. app.UseRouting();
 app.MapAdditionalIdentityEndpoints();
 app.MapControllers();
 
@@ -169,5 +181,20 @@ app.MapControllers();
 app.MapHub<LocalizationHub>("/localization_hub");
 app.MapHub<WorkerHub>("/worker_hub");
 app.MapHub<IndexHub>("/index_hub");
+
+// Seed výchozích rolí
+using(var scope = app.Services.CreateScope())
+{
+   var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+   var roles = new[] { "Administrator", "User", "Translator", "Owner" };
+
+   foreach(var role in roles)
+   {
+      if(!await roleManager.RoleExistsAsync(role))
+      {
+         await roleManager.CreateAsync(new IdentityRole(role));
+      }
+   }
+}
 
 app.Run();

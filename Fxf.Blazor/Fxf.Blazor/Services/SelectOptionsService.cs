@@ -15,12 +15,64 @@
 /// <param name="languageService">The language service used to manage application languages.</param>
 public class SelectOptionsService(IStringLocalizer<SelectOptionsService> localizer,
 	IThemeService themeService,
-	ILanguageService languageService) : ISelectOptionsService
+	ILanguageService languageService,
+	ILibreTranslateService translateService) : ISelectOptionsService
 {
 	private static readonly string defaultTheme = "Afrowave Light";
 	private readonly ILanguageService _languageService = languageService;
 	private readonly IStringLocalizer<SelectOptionsService> _localizer = localizer;
 	private readonly IThemeService _themeService = themeService;
+	private readonly ILibreTranslateService _translateService = translateService;
+
+	/// <summary>
+	/// Asynchronously retrieves a list of available languages formatted as selection options,
+	/// marking the specified language code as selected.
+	/// </summary>
+	/// <remarks>
+	/// The returned list contains one <see cref="SelectOption"/> per available language, with the
+	/// <see langword="Selected"/> property set to <see langword="true"/> for the option matching the
+	/// specified language code. This method is typically used to populate language selection
+	/// controls in user interfaces.
+	/// </remarks>
+	/// <param name="actualLanguageCode">
+	/// The language code to be marked as selected in the returned list. If the value is null, empty,
+	/// or not among the available languages, "en" is used as the default.
+	/// </param>
+	/// <returns>
+	/// A list of <see cref="SelectOption"/> objects representing available languages. The list is
+	/// empty if no languages are available.
+	/// </returns>
+	public async Task<List<SelectOption>> GetLanguagesAsync(string actualLanguageCode)
+	{
+		var serverResponse = await _translateService.GetAvailableLanguagesAsync();
+		if(!serverResponse.Success)
+		{
+			return [];
+		}
+		List<string> availableLanguageCodes = serverResponse.Data?.ToList() ?? [];
+		Response<List<Language>> languages = _languageService.GetSelectedLanguagesInfo(availableLanguageCodes);
+		if(!languages.Success || languages.Data == null)
+		{
+			return [];
+		}
+
+		// Ensure the actual language code is valid; if not, default to "en"
+		if(string.IsNullOrEmpty(actualLanguageCode) || !availableLanguageCodes.Contains(actualLanguageCode))
+		{
+			actualLanguageCode = "en";
+		}
+		List<SelectOption> result = [];
+		foreach(var lang in languages.Data)
+		{
+			result.Add(new SelectOption(actualLanguageCode)
+			{
+				Value = lang.Code,
+				Text = lang.Native,
+				Selected = actualLanguageCode == lang.Code
+			});
+		}
+		return result;
+	}
 
 	/// <summary>
 	/// Generates a list of selectable theme items for use in UI elements, marking the current theme

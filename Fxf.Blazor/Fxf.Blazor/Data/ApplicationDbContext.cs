@@ -14,7 +14,7 @@ namespace Fxf.Blazor.Data
 	/// cref="IdentityDbContext{TUser}"/> to provide Identity-related functionality.
 	/// </remarks>
 	/// <param name="options"></param>
-	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+	public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, IdentityRole, string>(options)
 	{
 		/// <summary>
 		/// Gets or sets the collection of hub activity log entries for the context.
