@@ -1,57 +1,86 @@
 ﻿@inherits LayoutComponentBase
 @inject IStringLocalizer<MainLayout> localizer
+@inject IHttpContextAccessor httpContextAccessor
 @inject IThemeService theme
 @inject ISelectOptionsService selectOptions
 @{
-	List<SelectOption> themes = selectOptions.GetThemes(theme.CurrentTheme);
-	Console.WriteLine("Found " + themes.Count + " themes");
+    List<SelectOption> themes = selectOptions.GetThemes(theme.CurrentTheme);
+    string currentLanguage = "en";
+    var context = httpContextAccessor?.HttpContext;
+    if (context != null && context.Request.Cookies.ContainsKey(".AspNetCore.Culture"))
+    {
+        var cookieValue = context.Request.Cookies[".AspNetCore.Culture"];
+        if (!string.IsNullOrWhiteSpace(cookieValue))
+        {
+            // Cookie format: c=cs|uic=cs
+            var match = System.Text.RegularExpressions.Regex.Match(cookieValue, "c=([a-zA-Z-]+)");
+            if (match.Success && match.Groups.Count > 1)
+            {
+                currentLanguage = match.Groups[1].Value.Split('-')[0];
+            }
+        }
+    }
+    Console.WriteLine($"Found {themes.Count} themes, currentLanguage: {currentLanguage}");
+	List<SelectOption> languages = selectOptions.GetLanguagesAsync(currentLanguage).GetAwaiter().GetResult();
 }
 <div class="page">
-	<div class="sidebar">
-		<NavMenu />
-	</div>
+    <div class="sidebar">
+        <NavMenu />
+    </div>
 
-	<main>
-		<div class="top-row px-4">
-			<div>
-				<select id="language-selector"
-						style="margin-right: 10px; padding-top:2px; padding-bottom: 2px; padding-left: 5px;"
-						onchange="changeLanguage(this.value)"
-						class="nav-item nav-link form">
-				</select>
-			</div>
-			<div>
-				<select id="theme_selector" class="nav-item nav-link form"
-						style="margin-right: 10px; padding-top:2px;  padding-bottom: 2px; padding-left: 5px;"
-						onchange="setTheme(this.value)" asp-items="@themes">
+    <main>
+        <div class="top-row px-4">
+            <div>
+                <select id="language-selector"
+                        style="margin-right: 10px; padding-top:2px; padding-bottom: 2px; padding-left: 5px;"
+                        onchange="changeLanguage(this.value)"
+                        class="nav-item nav-link form">
 
-					@foreach(var them in themes)
-					{
-						if(them.Selected)
-						{
-							<option value="@them.Value" selected>@them.Text</option>
-						}
-						else
-						{
-							<option value="@them.Value">@them.Text</option>
-						}
-					}
+                    @foreach(var them in languages)
+                    {
+                        if(them.Selected)
+                        {
+                            <option value="@them.Value" selected>@them.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@them.Value">@them.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div>
+                <select id="theme_selector" class="nav-item nav-link form"
+                        style="margin-right: 10px; padding-top:2px;  padding-bottom: 2px; padding-left: 5px;"
+                        onchange="setTheme(this.value)" asp-items="@themes">
 
-				</select>
-			</div>
+                    @foreach(var them in themes)
+                    {
+                        if(them.Selected)
+                        {
+                            <option value="@them.Value" selected>@them.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@them.Value">@them.Text</option>
+                        }
+                    }
 
-			<div id="topbar_user" style="margin-left: 1.3rem"></div>
-			<div id="user_counts" style="margin-left: 0.5rem"></div>
-		</div>
+                </select>
+            </div>
 
-		<article class="content px-4" onchange="reloadStatus">
-			@Body
-		</article>
-	</main>
+            <div id="topbar_user" style="margin-left: 1.3rem"></div>
+            <div id="user_counts" style="margin-left: 0.5rem"></div>
+        </div>
+
+        <article class="content px-4" onchange="reloadStatus">
+            @Body
+        </article>
+    </main>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
-	@localizer["An unhandled error has occurred."]
-	<a href="." class="reload">@localizer["Reload"]</a>
-	<span class="dismiss">🗙</span>
+    @localizer["An unhandled error has occurred."]
+    <a href="." class="reload">@localizer["Reload"]</a>
+    <span class="dismiss">🗙</span>
 </div>
