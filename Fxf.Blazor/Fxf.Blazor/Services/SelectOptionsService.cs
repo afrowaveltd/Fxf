@@ -13,6 +13,7 @@
 /// </param>
 /// <param name="themeService">The theme service used to retrieve available themes.</param>
 /// <param name="languageService">The language service used to manage application languages.</param>
+/// <param name="translateService">The transate service used to get list of supported languages</param>
 public class SelectOptionsService(IStringLocalizer<SelectOptionsService> localizer,
 	IThemeService themeService,
 	ILanguageService languageService,
@@ -71,7 +72,7 @@ public class SelectOptionsService(IStringLocalizer<SelectOptionsService> localiz
 				Selected = actualLanguageCode == lang.Code
 			});
 		}
-		return result;
+		return result.OrderBy(s => s.Text).ToList();
 	}
 
 	/// <summary>

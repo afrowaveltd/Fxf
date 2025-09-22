@@ -6,13 +6,13 @@
 	string actualTheme = theme.CurrentTheme;
 	string currentLanguage = "en";
 	var context = httpContextAccessor?.HttpContext;
-	if(context != null && context.Request.Cookies.ContainsKey(".AspNetCore.Culture"))
+	if(context != null && context.Request.Cookies.ContainsKey("BlazorCulture"))
 	{
-		var cookieValue = context.Request.Cookies[".AspNetCore.Culture"];
+		var cookieValue = context.Request.Cookies["BlazorCulture"];
 		if(!string.IsNullOrWhiteSpace(cookieValue))
 		{
 			// Cookie format: c=cs|uic=cs
-			var match = System.Text.RegularExpressions.Regex.Match(cookieValue, "c=([a-zA-Z-]+)");
+			var match = System.Text.RegularExpressions.Regex.Match(cookieValue, "([a-zA-Z-]+)");
 			if(match.Success && match.Groups.Count > 1)
 			{
 				currentLanguage = match.Groups[1].Value.Split('-')[0];
