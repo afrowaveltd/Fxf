@@ -36,13 +36,13 @@ html {
     padding-top: 10px;
 }
 
-    .sidenav .nav-link .nav-item {
+    .sidenav .nav-item .nav-link {
         color: var(--link);
         padding: 8px 15px;
         transition: 0.2s;
     }
 
-    .sidenav .nav-item:hover .nav-link:hover {
+    .sidenav .nav-link:hover .nav-item:hover {
         color: #fff;
         background-color: var(--link-hover);
     }
@@ -137,7 +137,7 @@ html {
 }
 
 .input-group-text {
-    border: 1px, solid;
+    border: 1px solid;
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
     border-top-right-radius: 0px;
@@ -242,7 +242,7 @@ label {
 }
 
 .input-group-text {
-    border: 1px, solid;
+    border: 1px solid;
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
     border-top-right-radius: 0px;
@@ -312,7 +312,7 @@ input {
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-        background-color: var(--input-background), !important;
+        background-color: var(--input-background) !important;
         color: var(--input-text) !important;
         -webkit-text-fill-color: var(--input-text) !important;
         transition: background-color 1s ease-in-out 5000s !important;
@@ -322,7 +322,7 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus,
 select:-webkit-autofill:active {
-    background-color: var(--input-background), !important;
+    background-color: var(--input-background) !important;
     color: var(--input-text) !important;
     -webkit-text-fill-color: var(--input-text) !important;
     transition: background-color 1s ease-in-out 5000s !important;
