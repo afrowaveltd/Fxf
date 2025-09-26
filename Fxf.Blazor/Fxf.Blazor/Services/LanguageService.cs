@@ -147,6 +147,7 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 						  new Language { Code = "pl", Name = "Polish", Native = "Polski" },
 						  new Language { Code = "ps", Name = "Pashto", Native = "پښتو", Rtl = true },
 						  new Language { Code = "pt", Name = "Portuguese", Native = "Português" },
+						  new Language { Code = "pt-BR", Name = "Portuguese (Brazil)", Native = "Português (Brasil)" },
 						  new Language { Code = "qu", Name = "Quechua", Native = "Runa Simi" },
 						  new Language { Code = "rm", Name = "Raeto Romance", Native = "Rumantsch" },
 						  new Language { Code = "rn", Name = "Kirundi", Native = "Kirundi" },
@@ -200,7 +201,9 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 						  new Language { Code = "yo", Name = "Yoruba", Native = "Yorùbá" },
 						  new Language { Code = "za", Name = "Zhuang", Native = "Cuengh / Tôô / 壮语" },
 						  new Language { Code = "zh", Name = "Chinese", Native = "中文" },
-						  new Language { Code = "zt", Name = "Chinese (Traditional)", Native = "中文（繁體）" },
+						  new Language { Code = "zh-Hans", Name = "Chinese (Simplified)", Native = "中文（简体）" },
+						  new Language { Code = "zh-Hant", Name = "Chinese (Traditional)", Native = "中文（繁體）" },
+                    new Language { Code = "zt", Name = "Chinese (Traditional)", Native = "中文（繁體）" },
 						  new Language { Code = "zu", Name = "Zulu", Native = "isiZulu" }
 	];
 
@@ -350,7 +353,7 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 	/// </returns>
 	public async Task<Response<Dictionary<string, string>>> GetDictionaryAsync(string code, bool isFrontend = false)
 	{
-		if(code == null || code.Length != 2)
+		if(code == null || code.Length < 2)
 		{
 			return Response<Dictionary<string, string>>.Fail(_t["Invalid code"].Value);
 		}
@@ -471,7 +474,7 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 			{
 				return Response<bool>.Fail(_t["Code cant be null"].Value);
 			}
-			if(code.Length != 2)
+			if(code.Length < 2)
 			{
 				return Response<bool>.Fail(_t["Invalid code"].Value);
 			}
@@ -576,4 +579,48 @@ public class LanguageService(IConfiguration configuration, IStringLocalizer<Lang
 		}
 		return [.. result];
 	}
+	/// <summary>
+	/// Creates empty language files for the specified languages if they do not already exist.
+	/// </summary>
+	/// <remarks>This method attempts to create both server and client language files for each language in the list.
+	/// If either file is created, the corresponding dictionary entry will be <see langword="true"/>. No files are
+	/// overwritten if they already exist.</remarks>
+	/// <param name="languages">A list of language codes for which to create missing language files. Each code should represent a valid language
+	/// identifier.</param>
+	/// <returns>A dictionary mapping each language code to a Boolean value indicating whether any language file was created for
+	/// that language. The value is <see langword="true"/> if a file was created; otherwise, <see langword="false"/>.</returns>
+	public async Task<Dictionary<string, bool>> CreateMissingLanguageFilesAsync(List<string> languages)
+	{
+		var result = new Dictionary<string, bool>();
+		foreach(var language in languages)
+		{
+			var resServer = await CreateEmptyLanguageFile(language, false);
+			var resClient = await CreateEmptyLanguageFile(language, true);
+			result[language] = resServer || resClient;
+		}
+		return result;
+   }
+
+   private async Task<bool> CreateEmptyLanguageFile(string code, bool isFrontend = false)
+	{
+			if(string.IsNullOrWhiteSpace(code) || code.Length < 2)
+		{
+			return false;
+		}
+		var path = isFrontend ? System.IO.Path.Combine(_clientLocalesPath, code + ".json") : System.IO.Path.Combine(_localesPath, code + ".json");
+		if(File.Exists(path))
+		{
+			return false;
+		}
+		try
+		{
+			await File.WriteAllTextAsync(path, "{}");
+			return true;
+		}
+		catch
+		{
+			return false;
+		}
+   }
+
 }

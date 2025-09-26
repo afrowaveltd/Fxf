@@ -133,6 +133,19 @@ else
 }
 string[] supportedCultures = ["en"];
 ILanguageService languageService = app.Services.GetRequiredService<ILanguageService>();
+ILibreTranslateService libreTranslateService = app.Services.GetRequiredService<ILibreTranslateService>();
+var languages = await libreTranslateService.GetAvailableLanguagesAsync();
+if (languages.Success && languages.Data != null)
+{
+   var createResult = await languageService.CreateMissingLanguageFilesAsync(languages.Data.ToList());
+   foreach(var result in createResult)
+   {
+      if(result.Value)
+      {
+         Console.WriteLine($"Created missing language file for '{result.Key}'.");
+      }
+   }
+}
 if(languageService != null)
 {
    supportedCultures = languageService.TranslationsPresented();
@@ -197,5 +210,6 @@ using(var scope = app.Services.CreateScope())
       }
    }
 }
+
 
 app.Run();

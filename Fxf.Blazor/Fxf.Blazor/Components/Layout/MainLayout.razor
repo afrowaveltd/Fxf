@@ -20,7 +20,7 @@
 					<select id="language-selector"
 							style="margin-right: 10px; padding-top:2px; padding-bottom: 2px; padding-left: 5px;"
 							onchange="changeLanguage(this.value)"
-							class="nav-item nav-link form">
+							class="nav-item nav-link form form-control-sm">
 						@foreach(var lang in languages)
 						{
 							if(lang.Selected)
@@ -35,7 +35,7 @@
 					</select>
 				</div>
 				<div>
-					<select id="theme_selector" class="nav-item nav-link form"
+					<select id="theme_selector" class="nav-item nav-link form form-control-sm"
 							style="margin-right: 10px; padding-top:2px;  padding-bottom: 2px; padding-left: 5px;"
 							onchange="setTheme(this.value)" asp-items="@themes">
 

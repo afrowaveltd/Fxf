@@ -8,6 +8,16 @@
 public interface ILanguageService
 {
 	/// <summary>
+	/// Creates language files for the specified languages if they do not already exist.
+	/// </summary>
+	/// <param name="languages">A list of language codes for which to ensure language files exist. Each code should be a non-empty string
+	/// representing a supported language.</param>
+	/// <returns>A task that represents the asynchronous operation. The task result contains a dictionary mapping each language code
+	/// to a boolean value indicating whether a new file was created (<see langword="true"/>) or already existed (<see
+	/// langword="false"/>).</returns>
+	Task<Dictionary<string, bool>> CreateMissingLanguageFilesAsync(List<string> languages);
+
+	/// <summary>
 	/// Asynchronously retrieves translation dictionaries for all languages that have locale files present.
 	/// </summary>
 	/// <param name="isFrontend">
